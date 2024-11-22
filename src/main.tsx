@@ -38,11 +38,15 @@ const router = createHashRouter([
     children: [
       {
         index: true,
-        element: <TimersView />,
+        element: <WorkoutView />,
       },
       {
-        path: "/workout",
-        element: <WorkoutView />,
+        path: "/add",
+        element: <AddTimer />,
+      },
+      {
+        path: "/timers",
+        element: <TimersView />,
       },
       {
         path: "/docs",
