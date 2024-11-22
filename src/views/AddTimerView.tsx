@@ -35,7 +35,12 @@ export default function AddTimer() {
     }
 
     const handleSave = () => {
-        // TO DO save timer with settings
+        const newTimer: Timer = {
+            type: selectedTimer,
+            settings: {},
+            state: 'not_started'
+        }
+        
         console.log('Save timer: ', selectedTimer)
         navigate('/')
     }

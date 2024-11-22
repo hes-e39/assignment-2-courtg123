@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { Panel } from "../components/generic/Panel";
 import Stopwatch from "../components/timers/Stopwatch";
@@ -7,31 +8,24 @@ import Tabata from "../components/timers/Tabata";
 import { Button } from "../components/generic/Button";
 
 
-// TODO: create timer settings modal component
-// (modal or something else? probably modal is best, most similar to existing panel component...)
-// Reqs:
-// Add Timer - Path should be /add
-// When user clicks "Add" from Home screen, they are routed to this page, where they can choose the type of timer
-//  and configure all inputs for each timer. After configuring, the user confirms and the timer is added to the list.
-// The /add page should allow the user to configure any of the four timers (stopwatch, countdown, XY, and tabata)
-// The user should be able to go back to the home page from here
-
-
-// "Save Timer" in modal adds it to workout with those settings
-// Should be able to edit timer settings
-// Should be able to remove timer from workout timer queue
-// Maximum of 10 timers is reasonable
-
-const editTimer = () => {
-  console.log("Open add timer (for editing)")
-}
-
-const removeTimer = () => {
-  console.log("Remove timer")
+interface Timer {
+  type: string;
+  settings: {
+    totalSeconds?: number;
+    rounds?: number;
+    workSeconds?: number;
+    restSeconds?: number;
+  };
+  state: 'not_started' | 'running' | 'completed';
 }
 
 const runWorkout = () => {
   console.log("Start workout")
+}
+
+// get timer details and display it
+const displayTimerDetails = (timer: Timer) => {
+  return timer.type
 }
 
 // "Start Workout" - cannot change timer settings at this point.
@@ -56,27 +50,46 @@ const runWorkout = () => {
 
 const WorkoutView = () => {
   const navigate = useNavigate();
+  const [timers, setTimers] = useState<Timer[]>([]);
+
+  // REQS NOTES
+  // Should be able to edit timer settings
+  // Should be able to remove timer from workout timer queue
+  // Maximum of 10 timers is reasonable
+
 
   const addTimer = () => {
     console.log("Open add timer")
     navigate('/add');
   }
-  
 
+  // remove a timer
+  const removeTimer = (index: number) => {
+    const newTimers = [...timers];
+    newTimers.splice(index, 1);
+    setTimers(newTimers);
+  }
+
+  // edit a timer
+  const editTimer = (index: number) => {
+    console.log(`Open ${index} timer (for editing)`)
+  }
+
+
+  // show queue of timers
   return (
     <div>
       <h1>Setup Workout</h1>
 
       <div>
-        [Timer 1] <Button onClick={editTimer}>Edit</Button><Button onClick={removeTimer}>Remove</Button><br />
-        [Timer 2] <Button onClick={editTimer}>Edit</Button><Button onClick={removeTimer}>Remove</Button><br />
-        [Timer 3] <Button onClick={editTimer}>Edit</Button><Button onClick={removeTimer}>Remove</Button><br />
-        [Timer 4] <Button onClick={editTimer}>Edit</Button><Button onClick={removeTimer}>Remove</Button><br />
-        [Timer 5] <Button onClick={editTimer}>Edit</Button><Button onClick={removeTimer}>Remove</Button><br />
-        [Timer 6] <Button onClick={editTimer}>Edit</Button><Button onClick={removeTimer}>Remove</Button><br />        
+        {timers.map((timer, index) => (
+          <div key={index}>
+              {displayTimerDetails(timer)} <Button onClick={editTimer}>Edit</Button><Button onClick={removeTimer}>Remove</Button><br />
+          </div>
+        ))}
+               
       </div>
       <div>
-        [timer type dropdown]
         <Button onClick={addTimer}>+ Add Timer</Button>
       </div>
       <div>
