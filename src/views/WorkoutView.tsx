@@ -1,14 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import { Panel } from "../components/generic/Panel";
-
 import Stopwatch from "../components/timers/Stopwatch";
 import Countdown from "../components/timers/Countdown";
 import XY from "../components/timers/XY";
 import Tabata from "../components/timers/Tabata";
 import { Button } from "../components/generic/Button";
 
-const addTimer = () => {
-  console.log("Open add timer")
-}
 
 // TODO: create timer settings modal component
 // (modal or something else? probably modal is best, most similar to existing panel component...)
@@ -58,6 +55,13 @@ const runWorkout = () => {
 // You don't want to clear the configurations as the timers are running. The user should be able to restart the entire workout at anytime
 
 const WorkoutView = () => {
+  const navigate = useNavigate();
+
+  const addTimer = () => {
+    console.log("Open add timer")
+    navigate('/add');
+  }
+  
 
   return (
     <div>

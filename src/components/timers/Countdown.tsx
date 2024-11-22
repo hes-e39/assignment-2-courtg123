@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { PlayPauseButton, FastForwardButton, ResetButton } from '../generic/Button';
 import { Input } from '../generic/Input';
 import { DisplayTime } from '../generic/DisplayTime';
@@ -9,7 +9,17 @@ const Countdown = () => {
     const [countdownSecValue, setCountdownSecValue] = useState(0);
     const [countdownTime, setCountdownTime] = useState(0);
     const [isCountdownRunning, setIsCountdownRunning] = useState(false);
-    const [intervalId, setIntervalId] = useState(0);
+    const intervalIdRef = useRef<number | undefined>(undefined);
+
+    // clear interval on unmount
+    useEffect(() => {
+        return () => {
+            if (intervalIdRef.current) {
+                clearInterval(intervalIdRef.current);
+                intervalIdRef.current = undefined;
+            }
+        }
+    }, []);
 
     // play/pause Countdown timer
     const handleStart = () => {
@@ -23,7 +33,7 @@ const Countdown = () => {
             const interval = setInterval(() => {
                 setCountdownTime(prevTime => {
                     if (prevTime <= 0) {
-                        clearInterval(interval);
+                        clearInterval(intervalIdRef.current);
                         setIsCountdownRunning(false);
                         return(0);
                     }
@@ -32,17 +42,19 @@ const Countdown = () => {
             }, 10);
 
             // store the interval id
-            setIntervalId(interval);
+            intervalIdRef.current = interval;
         } else {
             // clear the interval id
-            clearInterval(intervalId);
+            clearInterval(intervalIdRef.current);
+            intervalIdRef.current = undefined;
             setIsCountdownRunning(false);
         }
     };
 
     // reset Countdown timer - stopped, timer at 0, reset to initial state
     const handleReset = () => {
-        clearInterval(intervalId);
+        clearInterval(intervalIdRef.current);
+        intervalIdRef.current = undefined;
         setIsCountdownRunning(false);
         setCountdownTime(0);
     }
@@ -51,7 +63,8 @@ const Countdown = () => {
     const handleFastForward = () => {
         setCountdownTime(0);
         setIsCountdownRunning(false);
-        clearInterval(intervalId);
+        clearInterval(intervalIdRef.current);
+        intervalIdRef.current = undefined;
     }
 
     // display timer

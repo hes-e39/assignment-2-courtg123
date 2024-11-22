@@ -11,6 +11,7 @@ import "./index.css";
 import TimersView from "./views/TimersView";
 import DocumentationView from "./views/DocumentationView";
 import WorkoutView from "./views/WorkoutView";
+import AddTimerView from "./views/AddTimerView";
 
 const PageIndex = () => {
   return (
@@ -20,8 +21,6 @@ const PageIndex = () => {
       <div className="text-center m-4 font-mono mb-10">
         <div className="text-opacity-15 text-white">
           <Link to="/" className="mx-3 underline decoration-solid text-blue-400 hover:text-blue-200">Timers</Link>
-          |
-          <Link to="/workout" className="mx-3 underline decoration-solid text-blue-400 hover:text-blue-200">Workout</Link>
           |
           <Link to="/docs" className="mx-3 underline decoration-solid text-blue-400 hover:text-blue-200">Documentation</Link>
         </div>
@@ -42,7 +41,7 @@ const router = createHashRouter([
       },
       {
         path: "/add",
-        element: <AddTimer />,
+        element: <AddTimerView />,
       },
       {
         path: "/timers",
