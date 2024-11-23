@@ -14,7 +14,6 @@ export function TimersListManager({ children }) {
         setTimers([...timers, timer])
     }
 
-    // TO DO: index - removing wrong timer right now
     // remove timer
     const removeTimer = (index) => {
         const newTimers = [...timers];

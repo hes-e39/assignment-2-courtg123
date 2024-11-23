@@ -53,6 +53,9 @@ const runWorkout = () => {
 const WorkoutView = () => {
   const navigate = useNavigate();
   const {timers, removeTimer} = useContext(TimerContext)
+  
+  // max of 10 timers
+  const MAX_TIMERS = 10;
 
   // REQS NOTES
   // Should be able to edit timer settings
@@ -83,13 +86,17 @@ const WorkoutView = () => {
       <div>
         {timers.map((timer, index) => (
           <div key={index}>
-              {displayTimerDetails(timer)} <Button onClick={editTimer}>Edit</Button><Button onClick={removeTimer}>Remove</Button><br />
+              {displayTimerDetails(timer)} <Button onClick={editTimer}>Edit</Button><Button onClick={() => removeTimer(index)}>Remove</Button><br />
           </div>
         ))}
                
       </div>
       <div>
-        <Button onClick={addTimer}>+ Add Timer</Button>
+        {timers.length >= MAX_TIMERS ? (
+          <span class="text-gray-500"><i>You've added the maximum number of timers.</i></span>
+        ) : (
+          <Button onClick={addTimer}>+ Add Timer</Button>
+        )}
       </div>
       <div>
         <Button onClick={runWorkout}>Start Workout</Button>
