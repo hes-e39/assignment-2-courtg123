@@ -89,6 +89,7 @@ const WorkoutView = () => {
   // edit a timer
   const editTimer = (index: number) => {
     console.log(`Open ${index} timer (for editing)`)
+    navigate(`/edit/${index}`)
   }
 
 
@@ -100,7 +101,7 @@ const WorkoutView = () => {
       <div>
         {timers.map((timer, index) => (
           <div key={index}>
-              {displayTimerDetails(timer)} <Button onClick={editTimer}>Edit</Button><Button onClick={() => removeTimer(index)}>Remove</Button><br />
+              {displayTimerDetails(timer)} <Button onClick={() => editTimer(index)}>Edit</Button><Button onClick={() => removeTimer(index)}>Remove</Button><br />
           </div>
         ))}
                

@@ -1,5 +1,5 @@
-import { useState, useContext } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useState, useContext, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom';
 import { TimerContext } from '../context/TimerContext'
 
 import { Button } from "../components/generic/Button";
@@ -25,8 +25,9 @@ interface Timer {
 
 export default function AddTimer() {
     const navigate = useNavigate()
+    const { index } = useParams()
     const [selectedTimer, setSelectedTimer] = useState<string>('Stopwatch')
-    const { addTimer } = useContext(TimerContext)
+    const { timers, addTimer, updateTimer } = useContext(TimerContext)
 
     // state for this timer
     const [minValue, setMinValue] = useState(0);
@@ -101,6 +102,38 @@ export default function AddTimer() {
             )
         }
     }
+
+    useEffect(() => {
+        if (index === undefined) {
+            return;
+        }
+
+        const timer = timers[parseInt(index)]
+        if (!timer) {
+            return;
+        }
+
+        if (timer.type === 'Countdown' || timer.type === 'Stopwatch') {
+            const totalSeconds = timer.settings.totalSeconds;
+            setMinValue(Math.floor(totalSeconds / 60));
+            setSecValue(totalSeconds % 60);
+        }
+        else if (timer.type === 'XY') {
+            const totalSeconds = timer.settings.totalSeconds;
+            setMinValue(Math.floor(totalSeconds / 60));
+            setSecValue(totalSeconds % 60);
+            setRoundsValue(timer.settings.rounds || 1);
+        }
+        else if (timer.type === 'Tabata') {
+            const workSeconds = timer.settings.workSeconds;
+            const restSeconds = timer.settings.restSeconds;
+            setWorkMinValue(Math.floor(workSeconds / 60));
+            setWorkSecValue(workSeconds % 60);
+            setRestMinValue(Math.floor(restSeconds / 60));
+            setRestSecValue(restSeconds % 60);
+            setRoundsValue(timer.settings.rounds || 1);
+        }
+    }, [index, timers])
 
     const handleSave = () => {
         let settings = {};

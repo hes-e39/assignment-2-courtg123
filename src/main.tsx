@@ -49,6 +49,10 @@ const router = createHashRouter([
         element: <TimersView />,
       },
       {
+        path: "/edit/:index",
+        element: <AddTimerView />,
+      },
+      {
         path: "/docs",
         element: <DocumentationView />,
       },
