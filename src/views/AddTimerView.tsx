@@ -1,5 +1,7 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { TimerContext } from '../context/TimerContext'
+
 import { Button } from "../components/generic/Button";
 import { Select } from "../components/generic/Select";
 import { Panel } from "../components/generic/Panel";
@@ -12,6 +14,7 @@ import Tabata from "../components/timers/Tabata";
 export default function AddTimer() {
     const navigate = useNavigate()
     const [selectedTimer, setSelectedTimer] = useState<string>('Stopwatch')
+    const { addTimer } = useContext(TimerContext)
 
     const timerOptions = [
         { value: 'Stopwatch', label: 'Stopwatch' },
@@ -41,6 +44,7 @@ export default function AddTimer() {
             state: 'not_started'
         }
         
+        addTimer(newTimer)
         console.log('Save timer: ', selectedTimer)
         navigate('/')
     }

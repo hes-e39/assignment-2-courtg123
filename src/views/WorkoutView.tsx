@@ -1,11 +1,16 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { useContext } from 'react'
+import { TimerContext } from '../context/TimerContext'
+
 import { Panel } from "../components/generic/Panel";
+import { Button } from "../components/generic/Button";
+
 import Stopwatch from "../components/timers/Stopwatch";
 import Countdown from "../components/timers/Countdown";
 import XY from "../components/timers/XY";
 import Tabata from "../components/timers/Tabata";
-import { Button } from "../components/generic/Button";
+
 
 
 interface Timer {
@@ -23,10 +28,7 @@ const runWorkout = () => {
   console.log("Start workout")
 }
 
-// get timer details and display it
-const displayTimerDetails = (timer: Timer) => {
-  return timer.type
-}
+
 
 // "Start Workout" - cannot change timer settings at this point.
 // Timers run in order one after another, when one ends next one starts automatically
@@ -50,24 +52,21 @@ const displayTimerDetails = (timer: Timer) => {
 
 const WorkoutView = () => {
   const navigate = useNavigate();
-  const [timers, setTimers] = useState<Timer[]>([]);
+  const {timers, removeTimer} = useContext(TimerContext)
 
   // REQS NOTES
   // Should be able to edit timer settings
   // Should be able to remove timer from workout timer queue
   // Maximum of 10 timers is reasonable
 
+  // get timer details and display it
+  const displayTimerDetails = (timer: Timer) => {
+    return timer.type
+  }
 
   const addTimer = () => {
     console.log("Open add timer")
     navigate('/add');
-  }
-
-  // remove a timer
-  const removeTimer = (index: number) => {
-    const newTimers = [...timers];
-    newTimers.splice(index, 1);
-    setTimers(newTimers);
   }
 
   // edit a timer
