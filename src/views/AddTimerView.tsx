@@ -35,7 +35,7 @@ export default function AddTimer() {
     const [workSecValue, setWorkSecValue] = useState(0);
     const [restMinValue, setRestMinValue] = useState(0);
     const [restSecValue, setRestSecValue] = useState(0);
-    const [roundsValue, setRoundsValue] = useState(0);
+    const [roundsValue, setRoundsValue] = useState(1);
 
     const timerOptions = [
         { value: 'Stopwatch', label: 'Stopwatch' },
@@ -108,6 +108,22 @@ export default function AddTimer() {
         if (selectedTimer === 'Countdown' || selectedTimer === 'Stopwatch') {
             const totalSeconds = convertToMs(minValue, secValue) / 1000;
             settings = { totalSeconds };
+        }
+        else if (selectedTimer === 'XY') {
+            const totalSeconds = convertToMs(minValue, secValue) / 1000;
+            settings = {
+                totalSeconds,
+                rounds: roundsValue
+            }
+        }
+        else if (selectedTimer === 'Tabata') {
+            const workSeconds = convertToMs(workMinValue, workSecValue) / 1000;
+            const restSeconds = convertToMs(restMinValue, restSecValue) / 1000;
+            settings = {
+                workSeconds,
+                restSeconds,
+                rounds: roundsValue
+            }
         }
 
         const newTimer: Timer = {
