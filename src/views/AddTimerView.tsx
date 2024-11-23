@@ -10,11 +10,16 @@ import Stopwatch from "../components/timers/Stopwatch";
 import Countdown from "../components/timers/Countdown";
 import XY from "../components/timers/XY";
 import Tabata from "../components/timers/Tabata";
+import { convertToMs } from '../utils/helpers';
 
 export default function AddTimer() {
     const navigate = useNavigate()
     const [selectedTimer, setSelectedTimer] = useState<string>('Stopwatch')
     const { addTimer } = useContext(TimerContext)
+
+    // state for this timer
+    const [minValue, setMinValue] = useState(0);
+    const [secValue, setSecValue] = useState(0);
 
     const timerOptions = [
         { value: 'Stopwatch', label: 'Stopwatch' },
@@ -31,16 +36,32 @@ export default function AddTimer() {
 
     const displayTimer = () => {
         console.log('Timer selected: ', selectedTimer)
-        if (selectedTimer === 'Stopwatch') return <Stopwatch />
+        if (selectedTimer === 'Stopwatch') {
+            return (
+            <Stopwatch
+                minValue={minValue}
+                secValue={secValue}
+                setMinValue={setMinValue}
+                setSecValue={setSecValue}
+            />
+            )
+        }
         if (selectedTimer === 'Countdown') return <Countdown />
         if (selectedTimer === 'XY') return <XY />
         if (selectedTimer === 'Tabata') return <Tabata />
     }
 
     const handleSave = () => {
+        let settings = {};
+
+        if (selectedTimer === 'Countdown' || selectedTimer === 'Stopwatch') {
+            const totalSeconds = convertToMs(minValue, secValue) / 1000;
+            settings = { totalSeconds };
+        }
+
         const newTimer: Timer = {
             type: selectedTimer,
-            settings: {},
+            settings,
             state: 'not_started'
         }
         

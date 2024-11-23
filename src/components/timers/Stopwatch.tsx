@@ -4,16 +4,21 @@ import { Input } from '../generic/Input';
 import { DisplayTime } from '../generic/DisplayTime';
 import { convertToMs } from '../../utils/helpers';
 
-const Stopwatch = () => {
+interface StopwatchProps {
+    minValue: number;
+    secValue: number;
+    setMinValue: (value: number) => void;
+    setSecValue: (value: number) => void;
+}
+
+const Stopwatch = ({ minValue, secValue, setMinValue, setSecValue }: StopwatchProps) => {
     const [stopwatchTime, setStopwatchTime] = useState(0);
     const [isStopwatchRunning, setIsStopwatchRunning] = useState(false);
     const [intervalId, setIntervalId] = useState(0);
-    const [stopwatchMinValue, setStopwatchMinValue] = useState(0);
-    const [stopwatchSecValue, setStopwatchSecValue] = useState(0);
 
     // play/pause Stopwatch timer
     const handleStart = () => {
-        const totalMs = convertToMs(stopwatchMinValue, stopwatchSecValue);
+        const totalMs = convertToMs(minValue, secValue);
 
         if (!isStopwatchRunning && totalMs > 0) {
             setIsStopwatchRunning(true);
@@ -49,7 +54,7 @@ const Stopwatch = () => {
     // fast forward Stopwatch timer - stopped, timer at end time
     const handleFastForward = () => {
         setIsStopwatchRunning(false);
-        const totalMs = convertToMs(stopwatchMinValue, stopwatchSecValue);
+        const totalMs = convertToMs(minValue, secValue);
         setStopwatchTime(totalMs);
         return totalMs;
     }
@@ -67,14 +72,14 @@ const Stopwatch = () => {
             <div className="mt-8 flex flex-row justify-center items-center">
                 <Input
                     label="Min"
-                    value={stopwatchMinValue}
-                    onChange={setStopwatchMinValue}
+                    value={minValue}
+                    onChange={setMinValue}
                     placeholder="#"
                     disabled={isStopwatchRunning} />
                 <Input
                     label="Sec"
-                    value={stopwatchSecValue}
-                    onChange={setStopwatchSecValue}
+                    value={secValue}
+                    onChange={setSecValue}
                     placeholder="#"
                     disabled={isStopwatchRunning} />
             </div>

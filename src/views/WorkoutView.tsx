@@ -64,7 +64,21 @@ const WorkoutView = () => {
 
   // get timer details and display it
   const displayTimerDetails = (timer: Timer) => {
-    return timer.type
+    const { type, settings } = timer
+    
+    let details = `${type}: `;
+
+    if (settings.totalSeconds) {
+      details += `${Math.floor(settings.totalSeconds / 60)}min ${settings.totalSeconds % 60}sec`;
+    }
+    if (settings.rounds) {
+      details += ` & ${settings.rounds} rounds`
+    }
+    if (settings.workSeconds && settings.restSeconds) {
+      details += ` (${settings.workSeconds}sec work / ${settings.restSeconds}sec rest)`;
+    }
+
+    return details;
   }
 
   const addTimer = () => {
