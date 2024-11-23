@@ -165,7 +165,12 @@ export default function AddTimer() {
             state: 'not_started'
         }
         
-        addTimer(newTimer)
+        // if not editing an existing timer, add as new
+        if (index !== undefined) {
+            updateTimer(parseInt(index), newTimer)
+        } else {
+            addTimer(newTimer)
+        }
         console.log('Save timer: ', selectedTimer)
         navigate('/')
     }
