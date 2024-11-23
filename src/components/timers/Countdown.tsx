@@ -4,9 +4,14 @@ import { Input } from '../generic/Input';
 import { DisplayTime } from '../generic/DisplayTime';
 import { convertToMs } from '../../utils/helpers';
 
-const Countdown = () => {
-    const [countdownMinValue, setCountdownMinValue] = useState(0);
-    const [countdownSecValue, setCountdownSecValue] = useState(0);
+interface CountdownProps {
+    minValue: number;
+    secValue: number;
+    setMinValue: (value: number) => void;
+    setSecValue: (value: number) => void;
+}
+
+const Countdown = ({ minValue, secValue, setMinValue, setSecValue }: CountdownProps) => {
     const [countdownTime, setCountdownTime] = useState(0);
     const [isCountdownRunning, setIsCountdownRunning] = useState(false);
     const intervalIdRef = useRef<number | undefined>(undefined);
@@ -23,7 +28,7 @@ const Countdown = () => {
 
     // play/pause Countdown timer
     const handleStart = () => {
-        const totalMs = convertToMs(countdownMinValue, countdownSecValue);
+        const totalMs = convertToMs(minValue, secValue);
 
         if (!isCountdownRunning && totalMs > 0) {
             setIsCountdownRunning(true);
@@ -80,14 +85,14 @@ const Countdown = () => {
             <div className="mt-8 flex flex-row justify-center items-center">
                 <Input
                     label="Min"
-                    value={countdownMinValue}
-                    onChange={setCountdownMinValue}
+                    value={minValue}
+                    onChange={setMinValue}
                     placeholder="#"
                     disabled={isCountdownRunning} />
                 <Input
                     label="Sec"
-                    value={countdownSecValue}
-                    onChange={setCountdownSecValue}
+                    value={secValue}
+                    onChange={setSecValue}
                     placeholder="#"
                     disabled={isCountdownRunning} />
             </div>

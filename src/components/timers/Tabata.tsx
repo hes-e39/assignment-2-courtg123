@@ -5,12 +5,20 @@ import { DisplayTime } from '../generic/DisplayTime';
 import { DisplayRounds } from '../generic/DisplayRounds';
 import { convertToMs } from '../../utils/helpers';
 
-const Tabata = () => {
-    const [workMinTimeValue, setWorkMinTimeValue] = useState(0);
-    const [workSecTimeValue, setWorkSecTimeValue] = useState(0);
-    const [restMinTimeValue, setRestMinTimeValue] = useState(0);
-    const [restSecTimeValue, setRestSecTimeValue] = useState(0);
-    const [tabataRoundsValue, setTabataRoundsValue] = useState(1);
+interface TabataProps {
+    workMinValue: number;
+    workSecValue: number;
+    restMinValue: number;
+    restSecValue: number;
+    roundsValue: number;
+    setWorkMinValue: (value: number) => void;
+    setWorkSecValue: (value: number) => void;
+    setRestMinValue: (value: number) => void;
+    setRestSecValue: (value: number) => void;
+    setRoundsValue: (value: number) => void;
+}
+
+const Tabata = ({ workMinValue, workSecValue, restMinValue, restSecValue, roundsValue, setWorkMinValue, setWorkSecValue, setRestMinValue, setRestSecValue, setRoundsValue }: TabataProps) => {
     const [tabataTime, setTabataTime] = useState(0);
     const [isTabataRunning, setIsTabataRunning] = useState(false);
     const [tabataRound, setTabataRound] = useState(1);
@@ -23,7 +31,7 @@ const Tabata = () => {
 
     // reset timer value to initial time
     const resetTimer = () => {
-        const workTime = convertToMs(workMinTimeValue, workSecTimeValue);
+        const workTime = convertToMs(workMinValue, workSecValue);
         setTabataTime(workTime);
         tabataTimeRef.current = workTime;
         setCurrentPhase('Work');
@@ -32,7 +40,7 @@ const Tabata = () => {
 
     // play/pause Tabata timer
     const handleStart = () => {
-        if (!isTabataRunning && (workMinTimeValue > 0 || workSecTimeValue > 0) && !isTabataCompleted) {
+        if (!isTabataRunning && (workMinValue > 0 || workSecValue > 0) && !isTabataCompleted) {
             // check if it is the first start
             if (tabataTime === 0 && currentPhase === 'Work' && tabataRound === 1) {
                 resetTimer();
@@ -56,8 +64,8 @@ const Tabata = () => {
     const handleFastForward = () => {
         setIsTabataRunning(false);
         setIsTabataCompleted(true);
-        setTabataRound(tabataRoundsValue);
-        tabataRoundRef.current = tabataRoundsValue;
+        setTabataRound(roundsValue);
+        tabataRoundRef.current = roundsValue;
         setTabataTime(0);
         tabataTimeRef.current = 0;
         setCurrentPhase('Rest');
@@ -79,10 +87,10 @@ const Tabata = () => {
                         if (tabataPhaseRef.current === 'Work') {
                             tabataPhaseRef.current = 'Rest';
                             setCurrentPhase('Rest');
-                            return convertToMs(restMinTimeValue, restSecTimeValue);
+                            return convertToMs(restMinValue, restSecValue);
                         } else {
                             // check if all rounds completed
-                            if (tabataRoundRef.current >= tabataRoundsValue) {
+                            if (tabataRoundRef.current >= roundsValue) {
                                 // completed - stop timer and update state
                                 setIsTabataRunning(false);
                                 setIsTabataCompleted(true);
@@ -93,7 +101,7 @@ const Tabata = () => {
                             setTabataRound(tabataRoundRef.current);
                             tabataPhaseRef.current = 'Work';
                             setCurrentPhase('Work');
-                            return convertToMs(workMinTimeValue, workSecTimeValue);
+                            return convertToMs(workMinValue, workSecValue);
                         }
                     }
                     // decrease timer by 10ms
@@ -106,13 +114,13 @@ const Tabata = () => {
         return () => {
             if (interval) clearInterval(interval);
         }
-    }, [isTabataRunning, tabataRoundsValue, workMinTimeValue, workSecTimeValue, restMinTimeValue, restSecTimeValue]);
+    }, [isTabataRunning, roundsValue, workMinValue, workSecValue, restMinValue, restSecValue]);
 
     // display timer
     return (
         <div>
             <DisplayTime timeInMs={tabataTime} />
-            <DisplayRounds currentRound={tabataRound} totalRounds={tabataRoundsValue} phase={currentPhase} />
+            <DisplayRounds currentRound={tabataRound} totalRounds={roundsValue} phase={currentPhase} />
             <div className="mb-8">
                 <PlayPauseButton onClick={handleStart} />
                 <FastForwardButton onClick={handleFastForward} />
@@ -125,15 +133,15 @@ const Tabata = () => {
                     <div className="flex flex-row justify-center items-center">
                         <Input
                             label="Min"
-                            value={workMinTimeValue}
-                            onChange={setWorkMinTimeValue}
+                            value={workMinValue}
+                            onChange={setWorkMinValue}
                             placeholder="#"
                             disabled={isTabataRunning}
                         />
                         <Input
                             label="Sec"
-                            value={workSecTimeValue}
-                            onChange={setWorkSecTimeValue}
+                            value={workSecValue}
+                            onChange={setWorkSecValue}
                             placeholder="#"
                             disabled={isTabataRunning}
                         />
@@ -144,15 +152,15 @@ const Tabata = () => {
                     <div className="flex flex-row justify-center items-center">
                         <Input
                             label="Min"
-                            value={restMinTimeValue}
-                            onChange={setRestMinTimeValue}
+                            value={restMinValue}
+                            onChange={setRestMinValue}
                             placeholder="#" 
                             disabled={isTabataRunning}
                         />
                         <Input
                             label="Sec"
-                            value={restSecTimeValue}
-                            onChange={setRestSecTimeValue}
+                            value={restSecValue}
+                            onChange={setRestSecValue}
                             placeholder="#"
                             disabled={isTabataRunning}
                         />
@@ -161,8 +169,8 @@ const Tabata = () => {
             </div>
                 <Input
                     label="Rounds"
-                    value={tabataRoundsValue}
-                    onChange={setTabataRoundsValue}
+                    value={roundsValue}
+                    onChange={setRoundsValue}
                     min={1}
                     placeholder="#"
                     disabled={isTabataRunning}

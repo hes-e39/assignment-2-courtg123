@@ -5,10 +5,16 @@ import { DisplayTime } from '../generic/DisplayTime';
 import { DisplayRounds } from '../generic/DisplayRounds';
 import { convertToMs } from '../../utils/helpers';
 
-const XY = () => {
-    const [xyTimeMinValue, setXYTimeMinValue] = useState(0);
-    const [xyTimeSecValue, setXYTimeSecValue] = useState(0);
-    const [xyRoundsValue, setXYRoundsValue] = useState(1);
+interface XYProps {
+    minValue: number;
+    secValue: number;
+    roundsValue: number;
+    setMinValue: (value: number) => void;
+    setSecValue: (value: number) => void;
+    setRoundsValue: (value: number) => void;
+}
+
+const XY = ({ minValue, secValue, roundsValue, setMinValue, setSecValue, setRoundsValue }: XYProps) => {
     const [xyTime, setXYTime] = useState(0);
     const [isXYRunning, setIsXYRunning] = useState(false);
     const [xyRound, setXYRound] = useState(1);
@@ -19,14 +25,14 @@ const XY = () => {
 
     // reset timer value to initial time
     const resetTimer = () => {
-        const totalMs = convertToMs(xyTimeMinValue, xyTimeSecValue);
+        const totalMs = convertToMs(minValue, secValue);
         setXYTime(totalMs);
         xyTimeRef.current = totalMs;
     }
 
     // play/pause XY timer
     const handleStart = () => {
-        if (!isXYRunning && (xyTimeMinValue > 0 || xyTimeSecValue > 0) && !isXYCompleted) {
+        if (!isXYRunning && (minValue > 0 || secValue > 0) && !isXYCompleted) {
             // check if it is the first start
             if (xyTime === 0 && xyRound === 1) {
                 resetTimer();
@@ -49,8 +55,8 @@ const XY = () => {
     const handleFastForward = () => {
         setIsXYRunning(false);
         setIsXYCompleted(true);
-        setXYRound(xyRoundsValue);
-        xyRoundRef.current = xyRoundsValue;
+        setXYRound(roundsValue);
+        xyRoundRef.current = roundsValue;
         setXYTime(0);
         xyTimeRef.current = 0;
     }
@@ -67,14 +73,14 @@ const XY = () => {
                     // check if current interval completed
                     if (prevTime <= 0) {
                         // check if all rounds completed
-                        if (xyRound >= xyRoundsValue) {
+                        if (xyRound >= roundsValue) {
                             // completed - stop timer
                             setIsXYRunning(false);
                             return 0;
                         }
                         // increment round
                         setXYRound((prevRound) => prevRound + 1);
-                        return convertToMs(xyTimeMinValue, xyTimeSecValue);
+                        return convertToMs(minValue, secValue);
                     }
                     // decrease timer by 10ms
                     return prevTime - 10;
@@ -86,13 +92,13 @@ const XY = () => {
         return () => {
             if (interval) clearInterval(interval);
         }
-    }, [isXYRunning, xyRound, xyRoundsValue, xyTimeMinValue, xyTimeSecValue]);
+    }, [isXYRunning, xyRound, roundsValue, minValue, secValue]);
 
     // display timer
     return (
         <div>
             <DisplayTime timeInMs={xyTime} />
-            <DisplayRounds currentRound={xyRound} totalRounds={xyRoundsValue} />
+            <DisplayRounds currentRound={xyRound} totalRounds={roundsValue} />
             <div className="mb-8">
                 <PlayPauseButton onClick={handleStart} />
                 <FastForwardButton onClick={handleFastForward} />
@@ -105,23 +111,23 @@ const XY = () => {
             <div className="flex flex-row justify-center items-center mb-6">
                 <Input
                     label="Min"
-                    value={xyTimeMinValue}
-                    onChange={setXYTimeMinValue}
+                    value={minValue}
+                    onChange={setMinValue}
                     placeholder="#"
                     disabled={isXYRunning}
                 />
                 <Input
                     label="Sec"
-                    value={xyTimeSecValue}
-                    onChange={setXYTimeSecValue}
+                    value={secValue}
+                    onChange={setSecValue}
                     placeholder="#"
                     disabled={isXYRunning}
                 />
             </div>
             <Input
                 label="Rounds"
-                value={xyRoundsValue}
-                onChange={setXYRoundsValue}
+                value={roundsValue}
+                onChange={setRoundsValue}
                 min={0}
                 placeholder="#"
                 disabled={isXYRunning}

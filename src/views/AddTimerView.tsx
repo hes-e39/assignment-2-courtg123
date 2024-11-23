@@ -12,6 +12,17 @@ import XY from "../components/timers/XY";
 import Tabata from "../components/timers/Tabata";
 import { convertToMs } from '../utils/helpers';
 
+interface Timer {
+    type: string;
+    settings: {
+      totalSeconds?: number;
+      rounds?: number;
+      workSeconds?: number;
+      restSeconds?: number;
+    };
+    state: 'not_started' | 'running' | 'completed';
+  }
+
 export default function AddTimer() {
     const navigate = useNavigate()
     const [selectedTimer, setSelectedTimer] = useState<string>('Stopwatch')
@@ -20,6 +31,11 @@ export default function AddTimer() {
     // state for this timer
     const [minValue, setMinValue] = useState(0);
     const [secValue, setSecValue] = useState(0);
+    const [workMinValue, setWorkMinValue] = useState(0);
+    const [workSecValue, setWorkSecValue] = useState(0);
+    const [restMinValue, setRestMinValue] = useState(0);
+    const [restSecValue, setRestSecValue] = useState(0);
+    const [roundsValue, setRoundsValue] = useState(0);
 
     const timerOptions = [
         { value: 'Stopwatch', label: 'Stopwatch' },
@@ -46,9 +62,44 @@ export default function AddTimer() {
             />
             )
         }
-        if (selectedTimer === 'Countdown') return <Countdown />
-        if (selectedTimer === 'XY') return <XY />
-        if (selectedTimer === 'Tabata') return <Tabata />
+        if (selectedTimer === 'Countdown') {
+            return (
+            <Countdown
+                minValue={minValue}
+                secValue={secValue}
+                setMinValue={setMinValue}
+                setSecValue={setSecValue}
+            />
+            )
+        }
+        if (selectedTimer === 'XY') {
+            return (
+            <XY
+                minValue={minValue}
+                secValue={secValue}
+                roundsValue={roundsValue}
+                setMinValue={setMinValue}
+                setSecValue={setSecValue}
+                setRoundsValue={setRoundsValue}
+            />
+            )
+        }
+        if (selectedTimer === 'Tabata') {
+            return (
+            <Tabata
+                workMinValue={workMinValue}
+                workSecValue={workSecValue}
+                restMinValue={restMinValue}
+                restSecValue={restSecValue}
+                roundsValue={roundsValue}
+                setWorkMinValue={setWorkMinValue}
+                setWorkSecValue={setWorkSecValue}
+                setRestMinValue={setRestMinValue}
+                setRestSecValue={setRestSecValue}
+                setRoundsValue={setRoundsValue}
+            />
+            )
+        }
     }
 
     const handleSave = () => {
