@@ -34,7 +34,7 @@ interface Timer {
 
 const WorkoutView = () => {
   const navigate = useNavigate();
-  const {timers, removeTimer, running, timeInMs, currentTimer, currentTimerIndex, toggleRunning, currentPhase, currentRound} = useContext(TimerContext)
+  const {timers, removeTimer, running, timeInMs, currentTimer, currentTimerIndex, toggleRunning, currentPhase, currentRound, fastForward, resetWorkout} = useContext(TimerContext)
   
   // max of 10 timers
   const MAX_TIMERS = 10;
@@ -75,11 +75,13 @@ const WorkoutView = () => {
   }
 
   const handleReset = () => {
-    return
+    resetWorkout()
   }
 
   const handleFastForward = () => {
-    return
+    if (running) {
+      fastForward();
+    }
   }
 
   // current timer display

@@ -23,7 +23,9 @@ export const TimerContext = createContext({
     addTimer: (timer: Timer) => {},
     removeTimer: (index: number) => {},
     updateTimer: (index: number, timer: Timer) => {},
-    toggleRunning: () => {}
+    toggleRunning: () => {},
+    fastForward: () => {},
+    resetWorkout: () => {}
 })
 
 // Workout functionality
@@ -67,6 +69,42 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
         console.log('Current timer index: ', currentTimerIndex);
         console.log('Current timer: ', currentTimer);
         setRunning(newRunningState)
+    }
+
+    // fast forward
+    const fastForward = () => {
+        if (!currentTimer) return
+
+        // complete current timer
+        const newTimers = [...timers]
+        newTimers[currentTimerIndex].state = 'completed'
+        setTimers(newTimers)
+
+        // next timer or complete workout
+        if (currentTimerIndex <= timers.length -1) {
+            setCurrentTimerIndex(prev => prev + 1)
+            setCurrentRound(1)
+            setCurrentPhase('Work')
+        } else {
+            setRunning(false)
+            alert('Workout complete!')
+        }
+    }
+
+    // reset workout
+    const resetWorkout = () => {
+        setRunning(false)
+        setTimeInMs(0)
+        setCurrentTimerIndex(0)
+        setCurrentRound(1)
+        setCurrentPhase('Work')
+
+        // set all timers to not_started state
+        const resetTimers = timers.map(timer => ({
+            ...timer,
+            state: 'not_started' as const
+        }))
+        setTimers(resetTimers)
     }
 
     // workout timer hook
@@ -184,7 +222,9 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
             addTimer, 
             removeTimer, 
             updateTimer,
-            toggleRunning
+            toggleRunning,
+            fastForward,
+            resetWorkout
         }}>
             {children}
         </TimerContext.Provider>
