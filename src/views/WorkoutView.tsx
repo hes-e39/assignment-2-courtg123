@@ -7,10 +7,10 @@ import { convertToMs } from '../utils/helpers'
 import { Panel } from "../components/generic/Panel";
 import { Button, PlayPauseButton, FastForwardButton, ResetButton } from "../components/generic/Button";
 
-import Stopwatch from "../components/timers/Stopwatch";
+import StopwatchDisplay from "../components/timers/display/StopwatchDisplay";
 import CountdownDisplay from "../components/timers/display/CountdownDisplay";
-import XY from "../components/timers/XY";
-import Tabata from "../components/timers/Tabata";
+import XYDisplay from "../components/timers/display/XYDisplay";
+import TabataDisplay from "../components/timers/display/TabataDisplay";
 
 
 
@@ -86,16 +86,63 @@ const WorkoutView = () => {
   const renderCurrentTimer = () => {
     if (!currentTimer || !running) return null;
 
+    // time remaining calculation
     const timeRemainingMs = (() => {
       if (currentTimer.type === 'Countdown') {
         const totalMs = convertToMs(0, currentTimer.settings.totalSeconds || 0)
         return Math.max(0, totalMs - timeInMs)
       }
+      else if (currentTimer.type === 'Stopwatch') {
+        return timeInMs
+      }
+      else if (currentTimer.type === 'XY') {
+        return timeInMs
+      }
+      else if (currentTimer.type === 'Tabata') {
+        return timeInMs
+      }
+      return timeInMs
     })();
+
+
+    
+    const getTimerDisplay = () => {
+      if (currentTimer.type === 'Countdown') {
+        return <CountdownDisplay timeInMs={timeRemainingMs} />
+      }
+      if (currentTimer.type === 'Stopwatch') {
+        return <StopwatchDisplay timeInMs={timeRemainingMs} />
+      }
+      if (currentTimer.type === 'Tabata') {
+
+        // rounds and phases calculation
+        const workTimeMs = convertToMs(0, currentTimer.settings.workSeconds)
+        const restTimeMs = convertToMs(0, currentTimer.settings.restSeconds)
+        const roundTimeMs = workTimeMs + restTimeMs
+        const currentRound = Math.min(Math.floor(timeInMs / roundTimeMs) + 1, currentTimer.settings.rounds)
+        const timeInCurrentRound = timeInMs % roundTimeMs
+        const isWorkPhase = timeInCurrentRound < workTimeMs
+  
+        return (
+          <TabataDisplay
+            timeInMs={timeInMs}
+            roundsValue = {currentTimer.settings.rounds}
+            currentRound={currentRound}
+            totalRounds={currentTimer.settings.rounds}
+            currentPhase={isWorkPhase ? 'Work' : 'Rest'}
+            workMinValue = {Math.floor(currentTimer.settings.workSeconds)}
+            workSecValue = {currentTimer.settings.workSeconds % 60}
+            restMinValue = {Math.floor(currentTimer.settings.restSeconds)}
+            restSecValue = {currentTimer.settings.restSeconds % 60}
+          />
+        )
+      }
+      return null
+    }
 
     return (
       <Panel title={`Current: ${currentTimer.type}`}>
-        <CountdownDisplay timeInMs={timeRemainingMs} />
+        {getTimerDisplay()}
         <div className="text-sm text-gray-400 mt-2">
           {displayTimerDetails(currentTimer)}
         </div>

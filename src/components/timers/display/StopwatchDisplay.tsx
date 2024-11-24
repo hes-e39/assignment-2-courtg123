@@ -1,10 +1,10 @@
 import { DisplayTime } from '../../generic/DisplayTime'
 
-interface CountdownDisplayProps {
+interface StopwatchDisplayProps {
     timeInMs: number;
 }
 
-const CountdownDisplay = ({ timeInMs }: CountdownDisplayProps ) => {
+const StopwatchDisplay = ({ timeInMs }: StopwatchDisplayProps ) => {
     // display timer
     return (
         <div>
@@ -13,4 +13,4 @@ const CountdownDisplay = ({ timeInMs }: CountdownDisplayProps ) => {
     )
 }
 
-export default CountdownDisplay;
+export default StopwatchDisplay;

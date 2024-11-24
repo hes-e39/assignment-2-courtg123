@@ -70,7 +70,12 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
         if (running && currentTimer) {
 
             if (currentTimer.state === 'not_started') {
-                setTimeInMs(0);
+                // if tabata, start with work time
+                if (currentTimer.type === 'Tabata') {
+                    setTimeInMs(currentTimer.settings.workSeconds * 1000)
+                } else {
+                    setTimeInMs(0);
+                }
                 const newTimers = [...timers];
                 newTimers[currentTimerIndex].state = 'running';
                 setTimers(newTimers)
@@ -78,7 +83,15 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
 
             interval = setInterval(() => {
                 setTimeInMs(currentTime => {
-                    const newTime = currentTime + 10
+                    let newTime;
+
+                    // only stopwatch counts up
+                    if (currentTimer.type === 'Stopwatch') {
+                        newTime = currentTime + 10
+                    } else {
+                        newTime = currentTime - 10
+                    }
+                    
                     console.log('Time: ', newTime)
                     console.log('Current timer: ', currentTimer)
 
@@ -86,21 +99,36 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
                     let isTimerComplete = false;
                     const timer = timers[currentTimerIndex];
 
+                    if (timer.type === 'Tabata') {
+                        const workTime = timer.settings.workSeconds * 1000
+                        const restTime = timer.settings.restSeconds * 1000
+                        const roundTime = workTime + restTime
+                        const currentRound = Math.floor(timeInMs / roundTime) + 1
+                        const timeInCurrentRound = timeInMs % roundTime
+                        const isWorkPhase = timeInCurrentRound > restTime
+                        
+                        // if phase complete switch to next phase
+                        if (newTime <= 0) {
+                            if (isWorkPhase) {
+                                return restTime
+                            } else {
+                                if (currentRound >= timer.settings.rounds) {
+                                    isTimerComplete = true
+                                } else {
+                                    return workTime
+                                }
+                            }
+                        }
+                    }
                     if (timer.type === 'Stopwatch' || timer.type === 'Countdown') {
                         isTimerComplete = newTime >= (timer.settings.totalSeconds || 0) * 1000
                     }
-                    else if (timer.type === 'XY') {
+                    if (timer.type === 'XY') {
                         const roundTime = timer.settings.totalSeconds * 1000
                         const totalTime = roundTime * (timer.settings.rounds)
                         isTimerComplete = newTime >= totalTime
                     }
-                    else if (timer.type === 'Tabata') {
-                        const workTime = timer.settings.workSeconds * 1000
-                        const restTime = timer.settings.restSeconds * 1000
-                        const roundTime = workTime + restTime
-                        const totalTime = roundTime * (timer.settings.rounds)
-                        isTimerComplete = newTime >= totalTime
-                    }
+                    
 
                     // if it has completed
                     if (isTimerComplete) {
