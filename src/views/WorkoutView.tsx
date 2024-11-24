@@ -30,25 +30,28 @@ const runWorkout = () => {
 
 
 
-// "Start Workout" - cannot change timer settings at this point.
-// Timers run in order one after another, when one ends next one starts automatically
-// Can "fast forward" to next timer? Is that what Fast Forward is for? (confirm this)
-  // confirmed per requirement: Controls to "fast-forward" - ends the current running timer and moves onto the next one
-// Can pause/resume workout (pauses/resumes current timer only)
-// Can end workout (fast forward through all timers in workout timer stack)
-
 // UI: show which timer is currently running
 // indicate progress...
 // - show which timers have completed (maybe a checkmark in list or something to indicate?)
 // - show how many timers remaining
 // - maybe: total workout time remaining?
+// Can "fast forward" to next timer? Is that what Fast Forward is for? (confirm this)
+  // confirmed per requirement: Controls to "fast-forward" - ends the current running timer and moves onto the next one
+// Can pause/resume workout (pauses/resumes current timer only)
+// Can end workout (fast forward through all timers in workout timer stack)
 
 // additional requirements:
 // Each timer can be in one of three states: running, completed, and not running. 
 // You will need a way to keep track of what state the timer is in, so that you can display it accordingly (see the image above)
-// During configuration, the user can remove any timer from the queue, so you will be supporting deleting
 // While the timer is running, you will need to either store or dynamically calculate which timer is active.
 // You don't want to clear the configurations as the timers are running. The user should be able to restart the entire workout at anytime
+
+// Workout Flow...
+// click start workout: sets state = running, timer index is 0... then start first timer at index 0
+// if timer is a countdown or stopwatch - count to totalSeconds
+// if timer is XY - count to totalSeconds for x number of rounds (repeat/loop)
+// if timer is Tabata - count work seconds + rest seconds for x number of rounds (repeat/loop)
+// timer ends: mark as done, go to next timer. if no next timer, end workout
 
 const WorkoutView = () => {
   const navigate = useNavigate();
@@ -56,11 +59,6 @@ const WorkoutView = () => {
   
   // max of 10 timers
   const MAX_TIMERS = 10;
-
-  // REQS NOTES
-  // Should be able to edit timer settings
-  // Should be able to remove timer from workout timer queue
-  // Maximum of 10 timers is reasonable
 
   // get timer details and display it
   const displayTimerDetails = (timer: Timer) => {

@@ -12,7 +12,7 @@ import TimersView from "./views/TimersView";
 import DocumentationView from "./views/DocumentationView";
 import WorkoutView from "./views/WorkoutView";
 import AddTimerView from "./views/AddTimerView";
-import { TimersListManager } from "./context/TimerContext";
+import { WorkoutProvider } from "./context/TimerContext";
 
 const PageIndex = () => {
   return (
@@ -63,8 +63,8 @@ const router = createHashRouter([
 // biome-ignore lint/style/noNonNullAssertion: root html element is there
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <TimersListManager>
+    <WorkoutProvider>
       <RouterProvider router={router} />
-    </TimersListManager>
+    </WorkoutProvider>
   </StrictMode>
 );
