@@ -83,6 +83,9 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
                     const newTimers = [...timers];
                     newTimers[currentTimerIndex].state = 'running';
                     setTimers(newTimers);
+                } else if (currentTimer.type === 'XY') {
+                    setTimeInMs(currentTimer.settings.totalSeconds * 1000)
+                    setCurrentRound(1)
                 } else if (currentTimer.type === 'Countdown') {
                     setTimeInMs(currentTimer.settings.totalSeconds * 1000)
                 } else {
@@ -132,6 +135,17 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
                             }
                         }
                         return prevTime - 10;
+                    } else if (currentTimer.type === 'XY') {
+                        if (prevTime <=0) {
+                            // check if all rounds completed
+                            if(currentRound >= currentTimer.settings.rounds) {
+                                return completeCurrentTimer();
+                            }
+                            // increment round
+                            setCurrentRound(r=> r+1)
+                            return currentTimer.settings.totalSeconds * 1000
+                        }
+                        return prevTime - 10
                     } else if (currentTimer.type === 'Stopwatch') {
                         // count up for stopwatch
                         const newTime = prevTime + 10

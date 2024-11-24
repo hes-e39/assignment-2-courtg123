@@ -113,6 +113,17 @@ const WorkoutView = () => {
       if (currentTimer.type === 'Stopwatch') {
         return <StopwatchDisplay timeInMs={timeRemainingMs} />
       }
+      if (currentTimer.type === 'XY') {
+        return (
+          <XYDisplay
+            timeInMs={timeInMs}
+            roundsValue={currentTimer.settings.rounds}
+            currentRound={currentRound}
+            minValue={Math.floor(currentTimer.settings.totalSeconds / 60)}
+            secValue={currentTimer.settings.totalSeconds % 60}
+          />
+        )
+      }
       if (currentTimer.type === 'Tabata') {
         return (
           <TabataDisplay

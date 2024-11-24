@@ -2,22 +2,19 @@ import { DisplayTime } from '../../generic/DisplayTime'
 import { DisplayRounds } from '../../generic/DisplayRounds'
 
 interface XYDisplayProps {
-    workMinValue: number;
-    workSecValue: number;
-    restMinValue: number;
-    restSecValue: number;
     roundsValue: number;
     timeInMs: number;
     currentRound: number;
-    currentPhase: 'Work' | 'Rest';
+    minValue: number;
+    secValue: number;
 }
 
-const XYDisplay = ({ workMinValue, workSecValue, restMinValue, restSecValue, roundsValue, timeInMs, currentRound, currentPhase }: TabataDisplayProps) => {
+const XYDisplay = ({ roundsValue, timeInMs, currentRound, minValue, secValue }: XYDisplayProps) => {
     // display timer
     return (
         <div>
             <DisplayTime timeInMs={timeInMs} />
-            <DisplayRounds currentRound={currentRound} totalRounds={roundsValue} phase={currentPhase} />
+            <DisplayRounds currentRound={currentRound} totalRounds={roundsValue} />
         </div>
     );
 }
