@@ -3,6 +3,7 @@ import { createContext, useState, useEffect } from 'react'
 interface Timer {
     type: string;
     settings: {
+      currentPhase: string;
       totalSeconds?: number;
       rounds?: number;
       workSeconds?: number;
@@ -17,6 +18,8 @@ export const TimerContext = createContext({
     running: false,
     currentTimer: null as Timer | null,
     currentTimerIndex: 0,
+    currentPhase: 'Work',
+    currentRound: 1,
     addTimer: (timer: Timer) => {},
     removeTimer: (index: number) => {},
     updateTimer: (index: number, timer: Timer) => {},
@@ -29,6 +32,8 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
     const [running, setRunning] = useState(false);
     const [timeInMs, setTimeInMs] = useState(0);
     const [currentTimerIndex, setCurrentTimerIndex] = useState(0);
+    const [currentPhase, setCurrentPhase] = useState<'Work' | 'Rest'>('Work')
+    const [currentRound, setCurrentRound] = useState(1)
 
     // current timer by index
     const currentTimer = timers[currentTimerIndex] || null;
@@ -56,6 +61,7 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
 
     // toggle running/paused
     const toggleRunning = () => {
+
         const newRunningState = !running;
         console.log('Workout running: ', newRunningState);
         console.log('Current timer index: ', currentTimerIndex);
@@ -68,102 +74,88 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
         let interval: number | undefined;
 
         if (running && currentTimer) {
-
+            // initialize timer
             if (currentTimer.state === 'not_started') {
-                // if tabata, start with work time
                 if (currentTimer.type === 'Tabata') {
-                    setTimeInMs(currentTimer.settings.workSeconds * 1000)
+                    setTimeInMs(currentTimer.settings.workSeconds * 1000);
+                    setCurrentPhase('Work');
+                    setCurrentRound(1);
+                    const newTimers = [...timers];
+                    newTimers[currentTimerIndex].state = 'running';
+                    setTimers(newTimers);
+                } else if (currentTimer.type === 'Countdown') {
+                    setTimeInMs(currentTimer.settings.totalSeconds * 1000)
                 } else {
-                    setTimeInMs(0);
+                    setTimeInMs(0)
                 }
-                const newTimers = [...timers];
-                newTimers[currentTimerIndex].state = 'running';
+                const newTimers = [...timers]
+                newTimers[currentTimerIndex].state = 'running'
                 setTimers(newTimers)
             }
 
             interval = setInterval(() => {
-                setTimeInMs(currentTime => {
-                    let newTime;
+                setTimeInMs(prevTime => {
 
-                    // only stopwatch counts up
-                    if (currentTimer.type === 'Stopwatch') {
-                        newTime = currentTime + 10
-                    } else {
-                        newTime = currentTime - 10
-                    }
-                    
-                    console.log('Time: ', newTime)
-                    console.log('Current timer: ', currentTimer)
-
-                    // check if the current timer has completed
-                    let isTimerComplete = false;
-                    const timer = timers[currentTimerIndex];
-
-                    if (timer.type === 'Tabata') {
-                        const workTime = timer.settings.workSeconds * 1000
-                        const restTime = timer.settings.restSeconds * 1000
-                        const roundTime = workTime + restTime
-                        const currentRound = Math.floor(timeInMs / roundTime) + 1
-                        const timeInCurrentRound = timeInMs % roundTime
-                        const isWorkPhase = timeInCurrentRound > restTime
-                        
-                        // if phase complete switch to next phase
-                        if (newTime <= 0) {
-                            if (isWorkPhase) {
-                                return restTime
-                            } else {
-                                if (currentRound >= timer.settings.rounds) {
-                                    isTimerComplete = true
-                                } else {
-                                    return workTime
-                                }
-                            }
-                        }
-                    }
-                    if (timer.type === 'Stopwatch' || timer.type === 'Countdown') {
-                        isTimerComplete = newTime >= (timer.settings.totalSeconds || 0) * 1000
-                    }
-                    if (timer.type === 'XY') {
-                        const roundTime = timer.settings.totalSeconds * 1000
-                        const totalTime = roundTime * (timer.settings.rounds)
-                        isTimerComplete = newTime >= totalTime
-                    }
-                    
-
-                    // if it has completed
-                    if (isTimerComplete) {
-                        // mark it as complete
-                        const newTimers = [...timers];
-                        newTimers[currentTimerIndex].state = 'completed';
+                    const completeCurrentTimer = () => {
+                        const newTimers = [...timers]
+                        newTimers[currentTimerIndex].state = 'completed'
                         setTimers(newTimers)
 
-                        // if there is a next timer, go to it, if not, end workout
+                        // are there more timers? if not workout complete
                         if (currentTimerIndex < timers.length - 1) {
-                            setCurrentTimerIndex(prev => prev + 1)
-                            return;
+                            setCurrentTimerIndex(prev => prev +1)
+                            return 0
                         } else {
-                            // end workout
-                            setRunning(false);
-                            clearInterval(interval);
-                            return newTime;
+                            setRunning(false)
+                            alert('Workout complete!')
+                            return 0
                         }
                     }
 
-                    return newTime
-                })
-            }, 10)
-        } else {
-            console.log('workout paused or stopped')
+
+                    if (currentTimer.type === 'Tabata') {
+                        // check if current interval completed
+                        if (prevTime <= 0) {
+                            // flip between work and rest
+                            if (currentPhase === 'Work') {
+                                setCurrentPhase('Rest');
+                                return currentTimer.settings.restSeconds * 1000;
+                            } else if (currentPhase === 'Rest') {
+                                // check if all rounds completed
+                                if (currentRound >= (currentTimer.settings.rounds || 1)) {
+                                    return completeCurrentTimer()
+                                }
+                                // increment round and flip back to work
+                                setCurrentRound(r => r + 1);
+                                setCurrentPhase('Work');
+                                return currentTimer.settings.workSeconds * 1000;
+                            }
+                        }
+                        return prevTime - 10;
+                    } else if (currentTimer.type === 'Stopwatch') {
+                        // count up for stopwatch
+                        const newTime = prevTime + 10
+                        if (newTime >= (currentTimer.settings.totalSeconds * 1000)) {
+                            return completeCurrentTimer()
+                        }
+                        return newTime
+                    } else if (currentTimer.type === 'Countdown') {
+                        // count down for countdown
+                        const newTime = prevTime - 10
+                        if (newTime <= 0) {
+                            return completeCurrentTimer()
+                        }
+                        return newTime
+                    }
+                    return prevTime;
+                });
+            }, 10);
         }
 
-        // clear interval
         return () => {
-            if (interval) {
-                console.log('cleaning up interval')
-                clearInterval(interval);
-            }
-        }
-    }, [running, currentTimerIndex, timers])
+            if (interval) clearInterval(interval);
+        };
+    }, [running, currentTimer, currentPhase, currentRound]); // Added phase and round dependencies
 
     // return timer list
     return (
@@ -173,6 +165,8 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
             running,
             currentTimer,
             currentTimerIndex,
+            currentPhase,
+            currentRound,
             addTimer, 
             removeTimer, 
             updateTimer,

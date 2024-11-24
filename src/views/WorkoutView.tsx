@@ -34,7 +34,7 @@ interface Timer {
 
 const WorkoutView = () => {
   const navigate = useNavigate();
-  const {timers, removeTimer, running, timeInMs, currentTimer, currentTimerIndex, toggleRunning} = useContext(TimerContext)
+  const {timers, removeTimer, running, timeInMs, currentTimer, currentTimerIndex, toggleRunning, currentPhase, currentRound} = useContext(TimerContext)
   
   // max of 10 timers
   const MAX_TIMERS = 10;
@@ -114,25 +114,15 @@ const WorkoutView = () => {
         return <StopwatchDisplay timeInMs={timeRemainingMs} />
       }
       if (currentTimer.type === 'Tabata') {
-
-        // rounds and phases calculation
-        const workTimeMs = convertToMs(0, currentTimer.settings.workSeconds)
-        const restTimeMs = convertToMs(0, currentTimer.settings.restSeconds)
-        const roundTimeMs = workTimeMs + restTimeMs
-        const currentRound = Math.min(Math.floor(timeInMs / roundTimeMs) + 1, currentTimer.settings.rounds)
-        const timeInCurrentRound = timeInMs % roundTimeMs
-        const isWorkPhase = timeInCurrentRound < workTimeMs
-  
         return (
           <TabataDisplay
             timeInMs={timeInMs}
             roundsValue = {currentTimer.settings.rounds}
             currentRound={currentRound}
-            totalRounds={currentTimer.settings.rounds}
-            currentPhase={isWorkPhase ? 'Work' : 'Rest'}
-            workMinValue = {Math.floor(currentTimer.settings.workSeconds)}
+            currentPhase={currentPhase}
+            workMinValue = {Math.floor(currentTimer.settings.workSeconds) / 60}
             workSecValue = {currentTimer.settings.workSeconds % 60}
-            restMinValue = {Math.floor(currentTimer.settings.restSeconds)}
+            restMinValue = {Math.floor(currentTimer.settings.restSeconds) / 60}
             restSecValue = {currentTimer.settings.restSeconds % 60}
           />
         )
