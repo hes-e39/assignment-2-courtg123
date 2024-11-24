@@ -1,11 +1,5 @@
 import { createContext, useState, useEffect } from 'react'
 
-
-// additional requirements:
-// Each timer can be in one of three states: running, completed, and not running. 
-// You will need a way to keep track of what state the timer is in, so that you can display it accordingly (see the image above)
-// While the timer is running, you will need to either store or dynamically calculate which timer is active. index?
-// You don't want to clear the configurations as the timers are running. The user should be able to restart the entire workout at anytime
 interface Timer {
     type: string;
     settings: {

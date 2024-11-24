@@ -24,3 +24,8 @@ th {
   text-align: left;
   padding: 8px;
 }
+
+h1 {
+  font-weight: 500;
+  font-size: xx-large;
+}

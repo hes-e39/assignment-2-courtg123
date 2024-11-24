@@ -2,25 +2,35 @@ interface ButtonProps {
     children: React.ReactNode;
     onClick?: () => void;
     className?: string;
+    disabled?: boolean;
+}
+
+interface CustomButtonProps {
+    onClick: () => void;
+    disabled?: boolean;
 }
 
 export const Button = ({ 
     children,
     onClick,
-    className = ''
+    className = '',
+    disabled = false
 }: ButtonProps) => {
     return (
         <button
             onClick={onClick}
-            className={`px-6 py-3 bg-gray-900 hover:bg-gray-800 text-stone-300 border-stone-950 border rounded-xl m-1 ${className}`}
+            disabled={disabled}
+            className={`px-6 py-3 bg-gray-900 hover:bg-gray-800 text-stone-300 border-stone-950 border rounded-xl m-1
+                ${disabled ? 'opacity-50 cursor-not-allowed hover:bg-gray-900' : ''}
+                ${className}`}
         >
             {children}
         </button>
     );
 };
 
-export const PlayPauseButton = ({ onClick }: { onClick?: () => void }) => (
-    <Button onClick={onClick}>
+export const PlayPauseButton = ({ onClick, disabled }: CustomButtonProps) => (
+    <Button onClick={onClick} disabled={disabled}>
         {/* icon svg from icons8.com */}
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -36,8 +46,8 @@ export const PlayPauseButton = ({ onClick }: { onClick?: () => void }) => (
     </Button>
 )
 
-export const FastForwardButton = ({ onClick }: { onClick?: () => void }) => (
-    <Button onClick={onClick}>
+export const FastForwardButton = ({ onClick, disabled }: CustomButtonProps) => (
+    <Button onClick={onClick} disabled={disabled}>
         {/* icon svg from icons8.com */}
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -53,8 +63,8 @@ export const FastForwardButton = ({ onClick }: { onClick?: () => void }) => (
     </Button>
 )
 
-export const ResetButton = ({ onClick }: { onClick?: () => void }) => (
-    <Button onClick={onClick}>
+export const ResetButton = ({ onClick, disabled }: CustomButtonProps) => (
+    <Button onClick={onClick} disabled={disabled}>
         {/* icon svg from icons8.com */}
         <svg
             xmlns="http://www.w3.org/2000/svg"

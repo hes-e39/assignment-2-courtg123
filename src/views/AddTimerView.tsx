@@ -6,10 +6,10 @@ import { Button } from "../components/generic/Button";
 import { Select } from "../components/generic/Select";
 import { Panel } from "../components/generic/Panel";
 
-import Stopwatch from "../components/timers/Stopwatch";
-import Countdown from "../components/timers/Countdown";
-import XY from "../components/timers/XY";
-import Tabata from "../components/timers/Tabata";
+import StopwatchSettings from "../components/timers/settings/StopwatchSettings";
+import CountdownSettings from "../components/timers/settings/CountdownSettings";
+import XYSettings from "../components/timers/settings/XYSettings";
+import TabataSettings from "../components/timers/settings/TabataSettings";
 import { convertToMs } from '../utils/helpers';
 
 interface Timer {
@@ -55,7 +55,7 @@ export default function AddTimer() {
         console.log('Timer selected: ', selectedTimer)
         if (selectedTimer === 'Stopwatch') {
             return (
-            <Stopwatch
+            <StopwatchSettings
                 minValue={minValue}
                 secValue={secValue}
                 setMinValue={setMinValue}
@@ -65,7 +65,7 @@ export default function AddTimer() {
         }
         if (selectedTimer === 'Countdown') {
             return (
-            <Countdown
+            <CountdownSettings
                 minValue={minValue}
                 secValue={secValue}
                 setMinValue={setMinValue}
@@ -75,7 +75,7 @@ export default function AddTimer() {
         }
         if (selectedTimer === 'XY') {
             return (
-            <XY
+            <XYSettings
                 minValue={minValue}
                 secValue={secValue}
                 roundsValue={roundsValue}
@@ -87,7 +87,7 @@ export default function AddTimer() {
         }
         if (selectedTimer === 'Tabata') {
             return (
-            <Tabata
+            <TabataSettings
                 workMinValue={workMinValue}
                 workSecValue={workSecValue}
                 restMinValue={restMinValue}
@@ -178,8 +178,8 @@ export default function AddTimer() {
     }
 
     return (
-        <div>
-            <h1>Add Timer</h1>
+        <div className="flex flex-col items-center">
+            <h1>Update Timer</h1>
 
             <Select
                 label="Timer Type"
@@ -194,8 +194,10 @@ export default function AddTimer() {
                 {displayTimer()}
             </Panel>
 
-            <Button onClick={() => navigate('/')}>Cancel</Button>
-            <Button onClick={handleSave}>Save</Button>
+            <div>
+                <Button onClick={() => navigate('/')}>Cancel</Button>
+                <Button onClick={handleSave}>Save</Button>
+            </div>
         </div>
     )
      

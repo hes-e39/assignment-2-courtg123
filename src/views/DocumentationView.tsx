@@ -8,6 +8,7 @@ import { DisplayRounds } from "../components/generic/DisplayRounds";
 import { DisplayTime } from "../components/generic/DisplayTime";
 import { Input } from "../components/generic/Input";
 import { Panel } from "../components/generic/Panel";
+import { Select } from "../components/generic/Select";
 
 const Container = styled.div`
   display: flex;
@@ -66,6 +67,12 @@ const Documentation = () => {
               type: "string",
               defaultValue: "''",
             },
+            {
+              prop: "disabled",
+              description: "Sets button to a disabled state",
+              type: "boolean",
+              defaultValue: "false",
+            }
           ]}
         />
 
@@ -81,6 +88,12 @@ const Documentation = () => {
               type: "() => void",
               defaultValue: "undefined",
             },
+            {
+              prop: "disabled",
+              description: "Sets button to a disabled state",
+              type: "boolean",
+              defaultValue: "false",
+            }
           ]}
         />
 
@@ -96,6 +109,12 @@ const Documentation = () => {
               type: "() => void",
               defaultValue: "undefined",
             },
+            {
+              prop: "disabled",
+              description: "Sets button to a disabled state",
+              type: "boolean",
+              defaultValue: "false",
+            }
           ]}
         />
 
@@ -111,6 +130,12 @@ const Documentation = () => {
               type: "() => void",
               defaultValue: "undefined",
             },
+            {
+              prop: "disabled",
+              description: "Sets button to a disabled state",
+              type: "boolean",
+              defaultValue: "false",
+            }
           ]}
         />
 
@@ -178,6 +203,59 @@ const Documentation = () => {
               type: "boolean",
               defaultValue: "false",
             },
+          ]}
+        />
+
+        <DocumentComponent
+          title="Select"
+          component={
+            <Select
+              label="Select"
+              options={[
+                { value: "1", label: "Option 1"},
+                { value: "2", label: "Option 2"},
+                { value: "3", label: "Option 3"},
+                { value: "4", label: "Option 4"},
+              ]}
+            />
+          }
+          propDocs={[
+            {
+              prop: "label",
+              description: "Label for select dropdown",
+              type: "string",
+              defaultValue: "none (required)",
+            },
+            {
+              prop: "value",
+              description: "The current selected value",
+              type: "string | number",
+              defaultValue: "none (required)",
+            },
+            {
+              prop: "options",
+              description: "Options with values and labels",
+              type: "SelectOption[]",
+              defaultValue: "none (required)",
+            },
+            {
+              prop: "className",
+              description: "Adds css classes to the select input",
+              type: "string",
+              defaultValue: "none (required)",
+            },
+            {
+              prop: "onChange",
+              description: "Function called when the selection changes",
+              type: "(value: string | number) => void",
+              defaultValue: "none (required)",
+            },
+            {
+              prop: "disabled",
+              description: "Sets select to a disabled state",
+              type: "boolean",
+              defaultValue: "false",
+            }
           ]}
         />
 
