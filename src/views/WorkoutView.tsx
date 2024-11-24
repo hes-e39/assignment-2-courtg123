@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useContext } from 'react'
 import { TimerContext } from '../context/TimerContext'
+import { convertToMs } from '../utils/helpers'
 
 import { Panel } from "../components/generic/Panel";
 import { Button, PlayPauseButton, FastForwardButton, ResetButton } from "../components/generic/Button";
 
 import Stopwatch from "../components/timers/Stopwatch";
-import Countdown from "../components/timers/Countdown";
+import CountdownDisplay from "../components/timers/display/CountdownDisplay";
 import XY from "../components/timers/XY";
 import Tabata from "../components/timers/Tabata";
 
@@ -33,7 +34,7 @@ interface Timer {
 
 const WorkoutView = () => {
   const navigate = useNavigate();
-  const {timers, removeTimer, running, toggleRunning} = useContext(TimerContext)
+  const {timers, removeTimer, running, timeInSeconds, currentTimer, currentTimerIndex, toggleRunning} = useContext(TimerContext)
   
   // max of 10 timers
   const MAX_TIMERS = 10;
@@ -80,12 +81,34 @@ const WorkoutView = () => {
   const handleFastForward = () => {
     return
   }
+
+  // current timer display
+  const renderCurrentTimer = () => {
+    if (!currentTimer || !running) return null;
+
+    const timeRemainingMs = (() => {
+      if (currentTimer.type === 'Countdown') {
+        return convertToMs(0, currentTimer.settings.totalSeconds || 0)
+      }
+    })();
+
+    return (
+      <Panel title={`Current: ${currentTimer.type}`}>
+        <CountdownDisplay timeInMs={timeRemainingMs} />
+        <div className="text-sm text-gray-400 mt-2">
+          {displayTimerDetails(currentTimer)}
+        </div>
+      </Panel>
+    )
+  }
   
 
   // show queue of timers
   return (
     <div className="flex flex-col items-center">
       <h1>Workout</h1>
+
+      {renderCurrentTimer()}
 
       <div>
         {timers.map((timer, index) => (

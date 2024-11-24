@@ -16,6 +16,7 @@ export const TimerContext = createContext({
     timeInSeconds: 0,
     running: false,
     currentTimer: null as Timer | null,
+    currentTimerIndex: 0,
     addTimer: (timer: Timer) => {},
     removeTimer: (index: number) => {},
     updateTimer: (index: number, timer: Timer) => {},
@@ -62,18 +63,52 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
         setRunning(newRunningState)
     }
 
-    // timer effect test with basic timer first before our queue
+    // workout timer effect
     useEffect(() => {
         let interval: number | undefined;
 
-        if (running) {
-            console.log('start workout with timers: ', timers)
-            console.log('beginning with timer index: ', currentTimerIndex)
+        if (running && currentTimer) {
+
+            if (currentTimer.state === 'not_started') {
+                setTimeInSeconds(0);
+                const newTimers = [...timers];
+                newTimers[currentTimerIndex].state = 'running';
+                setTimers(newTimers)
+            }
+
             interval = setInterval(() => {
                 setTimeInSeconds(currentTime => {
                     const newTime = currentTime + 1
                     console.log('Timer tick: ', newTime)
                     console.log('Current timer: ', currentTimer)
+
+                    // check if the current timer has completed
+                    let isTimerComplete = false;
+                    const timer = timers[currentTimerIndex];
+
+                    if (timer.type === 'Stopwatch' || timer.type === 'Countdown') {
+                        isTimerComplete = newTime >= (timer.settings.totalSeconds || 0)
+                    }
+
+                    // if it has completed
+                    if (isTimerComplete) {
+                        // mark it as complete
+                        const newTimers = [...timers];
+                        newTimers[currentTimerIndex].state = 'completed';
+                        setTimers(newTimers)
+
+                        // if there is a next timer, go to it, if not, end workout
+                        if (currentTimerIndex < timers.length - 1) {
+                            setCurrentTimerIndex(prev => prev + 1)
+                            return;
+                        } else {
+                            // end workout
+                            setRunning(false);
+                            clearInterval(interval);
+                            return newTime;
+                        }
+                    }
+
                     return newTime
                 })
             }, 1000)
@@ -88,7 +123,7 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
                 clearInterval(interval);
             }
         }
-    }, [running, currentTimerIndex])
+    }, [running, currentTimerIndex, timers])
 
     // return timer list
     return (
@@ -97,6 +132,7 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
             timeInSeconds,
             running,
             currentTimer,
+            currentTimerIndex,
             addTimer, 
             removeTimer, 
             updateTimer,
