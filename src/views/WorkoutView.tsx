@@ -108,7 +108,7 @@ const WorkoutView = () => {
       </div>
       <div>
         {timers.length >= MAX_TIMERS ? (
-          <span class="text-gray-500"><i>You've added the maximum number of timers.</i></span>
+          <span className="text-gray-500"><i>You've added the maximum number of timers.</i></span>
         ) : (
           <Button onClick={addTimer}>+ Add Timer</Button>
         )}

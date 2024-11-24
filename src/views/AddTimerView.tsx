@@ -113,6 +113,8 @@ export default function AddTimer() {
             return;
         }
 
+        setSelectedTimer(timer.type)
+
         if (timer.type === 'Countdown' || timer.type === 'Stopwatch') {
             const totalSeconds = timer.settings.totalSeconds;
             setMinValue(Math.floor(totalSeconds / 60));
@@ -159,7 +161,7 @@ export default function AddTimer() {
             }
         }
 
-        const newTimer: Timer = {
+        const timerWithSettings: Timer = {
             type: selectedTimer,
             settings,
             state: 'not_started'
@@ -167,9 +169,9 @@ export default function AddTimer() {
         
         // if not editing an existing timer, add as new
         if (index !== undefined) {
-            updateTimer(parseInt(index), newTimer)
+            updateTimer(parseInt(index), timerWithSettings)
         } else {
-            addTimer(newTimer)
+            addTimer(timerWithSettings)
         }
         console.log('Save timer: ', selectedTimer)
         navigate('/')
