@@ -34,7 +34,7 @@ interface Timer {
 
 const WorkoutView = () => {
   const navigate = useNavigate();
-  const {timers, removeTimer, running, timeInSeconds, currentTimer, currentTimerIndex, toggleRunning} = useContext(TimerContext)
+  const {timers, removeTimer, running, timeInMs, currentTimer, currentTimerIndex, toggleRunning} = useContext(TimerContext)
   
   // max of 10 timers
   const MAX_TIMERS = 10;
@@ -88,7 +88,8 @@ const WorkoutView = () => {
 
     const timeRemainingMs = (() => {
       if (currentTimer.type === 'Countdown') {
-        return convertToMs(0, currentTimer.settings.totalSeconds || 0)
+        const totalMs = convertToMs(0, currentTimer.settings.totalSeconds || 0)
+        return Math.max(0, totalMs - timeInMs)
       }
     })();
 

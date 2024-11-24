@@ -13,7 +13,7 @@ interface Timer {
 
 export const TimerContext = createContext({
     timers: [] as Timer[],
-    timeInSeconds: 0,
+    timeInMs: 0,
     running: false,
     currentTimer: null as Timer | null,
     currentTimerIndex: 0,
@@ -27,7 +27,7 @@ export const TimerContext = createContext({
 export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
     const [timers, setTimers] = useState<Timer[]>([]);
     const [running, setRunning] = useState(false);
-    const [timeInSeconds, setTimeInSeconds] = useState(0);
+    const [timeInMs, setTimeInMs] = useState(0);
     const [currentTimerIndex, setCurrentTimerIndex] = useState(0);
 
     // current timer by index
@@ -63,23 +63,23 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
         setRunning(newRunningState)
     }
 
-    // workout timer effect
+    // workout timer hook
     useEffect(() => {
         let interval: number | undefined;
 
         if (running && currentTimer) {
 
             if (currentTimer.state === 'not_started') {
-                setTimeInSeconds(0);
+                setTimeInMs(0);
                 const newTimers = [...timers];
                 newTimers[currentTimerIndex].state = 'running';
                 setTimers(newTimers)
             }
 
             interval = setInterval(() => {
-                setTimeInSeconds(currentTime => {
-                    const newTime = currentTime + 1
-                    console.log('Timer tick: ', newTime)
+                setTimeInMs(currentTime => {
+                    const newTime = currentTime + 10
+                    console.log('Time: ', newTime)
                     console.log('Current timer: ', currentTimer)
 
                     // check if the current timer has completed
@@ -87,7 +87,19 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
                     const timer = timers[currentTimerIndex];
 
                     if (timer.type === 'Stopwatch' || timer.type === 'Countdown') {
-                        isTimerComplete = newTime >= (timer.settings.totalSeconds || 0)
+                        isTimerComplete = newTime >= (timer.settings.totalSeconds || 0) * 1000
+                    }
+                    else if (timer.type === 'XY') {
+                        const roundTime = timer.settings.totalSeconds * 1000
+                        const totalTime = roundTime * (timer.settings.rounds)
+                        isTimerComplete = newTime >= totalTime
+                    }
+                    else if (timer.type === 'Tabata') {
+                        const workTime = timer.settings.workSeconds * 1000
+                        const restTime = timer.settings.restSeconds * 1000
+                        const roundTime = workTime + restTime
+                        const totalTime = roundTime * (timer.settings.rounds)
+                        isTimerComplete = newTime >= totalTime
                     }
 
                     // if it has completed
@@ -111,7 +123,7 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
 
                     return newTime
                 })
-            }, 1000)
+            }, 10)
         } else {
             console.log('workout paused or stopped')
         }
@@ -129,7 +141,7 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
     return (
         <TimerContext.Provider value={{ 
             timers,
-            timeInSeconds,
+            timeInMs,
             running,
             currentTimer,
             currentTimerIndex,

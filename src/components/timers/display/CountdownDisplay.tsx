@@ -5,6 +5,8 @@ interface CountdownDisplayProps {
 }
 
 const CountdownDisplay = ({ timeInMs }: CountdownDisplayProps ) => {
+    // check that time is 
+
     // display timer
     return (
         <div>
