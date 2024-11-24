@@ -70,17 +70,18 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
 
     // timer effect test with basic timer first before our queue
     useEffect(() => {
-        let interval;
+        let interval: number | undefined;
 
         if (running) {
             console.log('start workout with timers: ', timers)
             console.log('beginning with timer index: ', currentTimerIndex)
             interval = setInterval(() => {
-                const newTime = t + 1;
-                console.log('Timer tick: ', newTime)
-                console.log('Current timer: ', currentTimer)
-                setTimeInSeconds(t=> t + 1);
-
+                setTimeInSeconds(currentTime => {
+                    const newTime = currentTime + 1
+                    console.log('Timer tick: ', newTime)
+                    console.log('Current timer: ', currentTimer)
+                    return newTime
+                })
             }, 1000)
         } else {
             console.log('workout paused or stopped')

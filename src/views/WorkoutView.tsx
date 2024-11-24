@@ -24,9 +24,6 @@ interface Timer {
   state: 'not_started' | 'running' | 'completed';
 }
 
-const runWorkout = () => {
-  console.log("Start workout")
-}
 
 
 
@@ -55,7 +52,7 @@ const runWorkout = () => {
 
 const WorkoutView = () => {
   const navigate = useNavigate();
-  const {timers, removeTimer} = useContext(TimerContext)
+  const {timers, removeTimer, running, toggleRunning} = useContext(TimerContext)
   
   // max of 10 timers
   const MAX_TIMERS = 10;
@@ -90,6 +87,11 @@ const WorkoutView = () => {
     navigate(`/edit/${index}`)
   }
 
+  const runWorkout = () => {
+    console.log("Start workout")
+    toggleRunning()
+  }
+  
 
   // show queue of timers
   return (
@@ -112,7 +114,7 @@ const WorkoutView = () => {
         )}
       </div>
       <div>
-        <Button onClick={runWorkout}>Start Workout</Button>
+        <Button onClick={runWorkout}>Start/Pause Workout</Button>
       </div>
     </div>
   );
