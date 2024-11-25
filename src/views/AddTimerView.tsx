@@ -6,10 +6,7 @@ import { Button } from "../components/generic/Button";
 import { Select } from "../components/generic/Select";
 import { Panel } from "../components/generic/Panel";
 
-import StopwatchSettings from "../components/timers/settings/StopwatchSettings";
-import CountdownSettings from "../components/timers/settings/CountdownSettings";
-import XYSettings from "../components/timers/settings/XYSettings";
-import TabataSettings from "../components/timers/settings/TabataSettings";
+import TimerSettings from "../components/timers/TimerSettings";
 import { convertToMs } from '../utils/helpers';
 import { Timer } from '../types/timers'
 
@@ -47,19 +44,10 @@ export default function AddTimer() {
 
     // Display timer settings by timer type
     const displayTimer = () => {
-        if (selectedTimer === 'Stopwatch') {
+        if (selectedTimer === 'Stopwatch' || selectedTimer === 'Countdown') {
             return (
-            <StopwatchSettings
-                minValue={minValue}
-                secValue={secValue}
-                setMinValue={setMinValue}
-                setSecValue={setSecValue}
-            />
-            )
-        }
-        if (selectedTimer === 'Countdown') {
-            return (
-            <CountdownSettings
+            <TimerSettings
+                type={selectedTimer}
                 minValue={minValue}
                 secValue={secValue}
                 setMinValue={setMinValue}
@@ -69,7 +57,8 @@ export default function AddTimer() {
         }
         if (selectedTimer === 'XY') {
             return (
-            <XYSettings
+            <TimerSettings
+                type={selectedTimer}
                 minValue={minValue}
                 secValue={secValue}
                 roundsValue={roundsValue}
@@ -81,7 +70,8 @@ export default function AddTimer() {
         }
         if (selectedTimer === 'Tabata') {
             return (
-            <TabataSettings
+            <TimerSettings
+                type={selectedTimer}
                 workMinValue={workMinValue}
                 workSecValue={workSecValue}
                 restMinValue={restMinValue}

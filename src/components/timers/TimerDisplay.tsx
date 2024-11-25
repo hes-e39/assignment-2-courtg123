@@ -1,6 +1,6 @@
-import { DisplayTime } from '../../generic/DisplayTime'
-import { DisplayRounds } from '../../generic/DisplayRounds'
-import { Button, PlayPauseButton, FastForwardButton, ResetButton } from '../../generic/Button'
+import { DisplayTime } from '../generic/DisplayTime'
+import { DisplayRounds } from '../generic/DisplayRounds'
+import { Button, PlayPauseButton, FastForwardButton, ResetButton } from '../generic/Button'
 
 interface TimerDisplayProps {
     timeInMs: number;

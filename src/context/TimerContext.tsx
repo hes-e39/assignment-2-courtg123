@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react'
-import { Timer } from '../types/timers'
+import { Timer, TimerPhase } from '../types/timers'
 
 // Global context for Timer
 export const TimerContext = createContext({
@@ -17,6 +17,30 @@ export const TimerContext = createContext({
     fastForward: () => {},
     resetWorkout: () => {}
 })
+
+// Get timer details and display it within queue
+export const displayTimerDetails = (timer: Timer) => {
+    const { type, settings } = timer
+    
+    let details = `${type}: `;
+
+    if (settings.rounds) {
+      details += `${settings.rounds} Rounds x `
+    }
+    if (settings.totalSeconds) {
+      details += `${Math.floor(settings.totalSeconds / 60)} min ${settings.totalSeconds % 60} sec `;
+    }
+    if (settings.workSeconds && settings.restSeconds) {
+      const workMin = Math.floor(settings.workSeconds / 60)
+      const workSec = settings.workSeconds % 60
+      const restMin = Math.floor(settings.restSeconds / 60)
+      const restSec = settings.restSeconds % 60
+
+      details += `(${workMin}min ${workSec} sec Work & ${restMin} sec ${restSec}sec Rest)`;
+    }
+
+    return details;
+  }
 
 // Workout functionality
 export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
@@ -93,6 +117,7 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
         setTimers(resetTimers)
     }
 
+    // TO DO: Custom Hooks maybe?
     // Workout timer hook
     useEffect(() => {
         // Interval

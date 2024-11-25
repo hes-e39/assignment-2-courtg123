@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { useContext } from 'react'
-import { TimerContext } from '../context/TimerContext'
+import { TimerContext, displayTimerDetails } from '../context/TimerContext'
 import { convertToMs } from '../utils/helpers'
-import { Timer } from '../types/timers'
+import { Timer, TimerPhase } from '../types/timers'
 
 import { Panel } from "../components/generic/Panel";
 import { Button } from "../components/generic/Button";
 
-import TimerDisplay from "../components/timers/display/TimerDisplay";
+import TimerDisplay from "../components/timers/TimerDisplay";
 
 const WorkoutView = () => {
   const navigate = useNavigate();
@@ -30,30 +30,6 @@ const WorkoutView = () => {
 
   // Check if workout started
   const hasStarted = currentTimer?.state !== 'not_started'
-
-  // Get timer details and display it within queue
-  const displayTimerDetails = (timer: Timer) => {
-    const { type, settings } = timer
-    
-    let details = `${type}: `;
-
-    if (settings.rounds) {
-      details += `${settings.rounds} Rounds x `
-    }
-    if (settings.totalSeconds) {
-      details += `${Math.floor(settings.totalSeconds / 60)} min ${settings.totalSeconds % 60} sec `;
-    }
-    if (settings.workSeconds && settings.restSeconds) {
-      const workMin = Math.floor(settings.workSeconds / 60)
-      const workSec = settings.workSeconds % 60
-      const restMin = Math.floor(settings.restSeconds / 60)
-      const restSec = settings.restSeconds % 60
-
-      details += `(${workMin}min ${workSec} sec Work & ${restMin} sec ${restSec}sec Rest)`;
-    }
-
-    return details;
-  }
 
   // Add a timer to the workout
   const addTimer = () => {
@@ -104,7 +80,7 @@ const WorkoutView = () => {
           type={currentTimer.type}
           roundsValue={currentTimer.settings.rounds}
           currentRound={currentRound}
-          currentPhase={currentPhase as 'Work' | 'Rest'}
+          currentPhase={currentPhase as TimerPhase}
           running={running}
           completed={isCompleted}
           isFirstTimer={isFirstTimer}
