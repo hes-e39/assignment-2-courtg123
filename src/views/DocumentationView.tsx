@@ -79,7 +79,7 @@ const Documentation = () => {
         <DocumentComponent
           title="Button - Play/Pause"
           component={
-            <PlayPauseButton />
+            <PlayPauseButton onClick={() => {}} />
           }
           propDocs={[
             {
@@ -106,7 +106,7 @@ const Documentation = () => {
         <DocumentComponent
           title="Button - Fast Forward"
           component={
-            <FastForwardButton />
+            <FastForwardButton onClick={() => {}} />
           }
           propDocs={[
             {
@@ -127,7 +127,7 @@ const Documentation = () => {
         <DocumentComponent
           title="Button - Reset"
           component={
-            <ResetButton />
+            <ResetButton onClick={() => {}} />
           }
           propDocs={[
             {
