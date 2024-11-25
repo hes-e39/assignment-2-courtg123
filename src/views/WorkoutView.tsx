@@ -152,15 +152,32 @@ const WorkoutView = () => {
 
   // show queue of timers
   return (
-    <div className="flex flex-col items-center w-full ">
+    <div className="flex flex-col items-center w-full max-w-3xl px-4 mx-auto">
       <h1>Workout</h1>
 
       {renderCurrentTimer()}
 
-      <div>
+      <div className="w-full max-w-xl">
         {timers.map((timer, index) => (
-          <div key={index}>
-              {displayTimerDetails(timer)} <Button onClick={() => editTimer(index)}>Edit</Button><Button onClick={() => removeTimer(index)}>Remove</Button><br />
+          <div key={index}
+          className={`
+            flex
+            justify-between
+            items-center
+            mb-2 
+            p-2 
+            rounded-lg
+            bg-slate-900/50
+            ${timer.state === 'completed' ? 'line-through text-gray-600' : ''}
+            ${index === currentTimerIndex ? 'text-lime-200' : ''}
+          `}>
+            <div className="flex-grow text-center">
+              {displayTimerDetails(timer)}
+            </div>
+            <div className="flex gap-2 ml-4">
+              <Button onClick={() => editTimer(index)}>Edit</Button>
+              <Button onClick={() => removeTimer(index)}>Remove</Button><br />
+            </div>
           </div>
         ))}
                
