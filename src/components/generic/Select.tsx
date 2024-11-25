@@ -16,7 +16,7 @@ export const Select = ({
     label,
     value = '',
     options,
-    className = 'm-1 min-w-20 rounded-md pl-3 pr-4 py-5 text-white text-opacity-80 disabled:text-white disabled:text-opacity-25 bg-opacity-5 bg-white text-2xl font-bold font-mono text-center mr-3',
+    className = 'm-1 min-w-20 mb-4 rounded-md pl-3 pr-4 py-5 text-white text-opacity-80 disabled:text-white disabled:text-opacity-25 bg-opacity-5 bg-white text-2xl font-bold font-mono text-center mr-3',
     onChange,
     disabled,
 }: SelectProps) => {

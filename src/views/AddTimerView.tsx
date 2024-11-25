@@ -141,10 +141,18 @@ export default function AddTimer() {
         let settings = {};
 
         if (selectedTimer === 'Countdown' || selectedTimer === 'Stopwatch') {
+            if (minValue === 0 && secValue === 0) {
+                alert('Timer time must be greater than 0')
+                return
+            }
             const totalSeconds = convertToMs(minValue, secValue) / 1000;
             settings = { totalSeconds };
         }
         else if (selectedTimer === 'XY') {
+            if (minValue === 0 && secValue === 0) {
+                alert('Timer time must be greater than 0')
+                return
+            }
             const totalSeconds = convertToMs(minValue, secValue) / 1000;
             settings = {
                 totalSeconds,
@@ -152,6 +160,11 @@ export default function AddTimer() {
             }
         }
         else if (selectedTimer === 'Tabata') {
+            if ((workMinValue === 0 && workSecValue === 0) || (restMinValue === 0 && restSecValue === 0)) {
+                alert('Timer work and rest times must be greater than 0')
+                return
+            }
+            
             const workSeconds = convertToMs(workMinValue, workSecValue) / 1000;
             const restSeconds = convertToMs(restMinValue, restSecValue) / 1000;
             settings = {
