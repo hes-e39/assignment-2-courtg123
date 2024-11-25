@@ -28,6 +28,9 @@ const WorkoutView = () => {
   // max of 10 timers
   const MAX_TIMERS = 10;
 
+  // check if workout started
+  const hasStarted = currentTimer?.state !== 'not_started'
+
   // get timer details and display it within queue
   const displayTimerDetails = (timer: Timer) => {
     const { type, settings } = timer
@@ -83,7 +86,6 @@ const WorkoutView = () => {
 
     const isCompleted = timers.every(timer => timer.state === 'completed')
     const isFirstTimer = currentTimerIndex === 0
-    const hasStarted = currentTimer.state !== 'not_started'
 
     // time remaining calculation
     const timeRemainingMs = (() => {
@@ -141,7 +143,7 @@ const WorkoutView = () => {
             rounded-lg
             bg-slate-900/50
             ${timer.state === 'completed' ? 'line-through text-gray-600' : ''}
-            ${index === currentTimerIndex ? 'text-lime-200' : ''}
+            ${(hasStarted && index === currentTimerIndex) ? 'text-lime-200' : ''}
           `}>
             <div className="flex-grow text-center">
               {displayTimerDetails(timer)}
@@ -149,13 +151,13 @@ const WorkoutView = () => {
             <div className="flex gap-2 ml-4">
               <Button
                 onClick={() => editTimer(index)}
-                disabled={index <= currentTimerIndex || timer.state === 'completed'}
+                disabled={(hasStarted && index <= currentTimerIndex) || timer.state === 'completed'}
               >
                 Edit
               </Button>
               <Button
                 onClick={() => removeTimer(index)}
-                disabled={index <= currentTimerIndex || timer.state === 'completed'}
+                disabled={(hasStarted && index <= currentTimerIndex) || timer.state === 'completed'}
               >
                 Remove
               </Button>

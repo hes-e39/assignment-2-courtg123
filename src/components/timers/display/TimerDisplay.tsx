@@ -24,7 +24,7 @@ const TimerDisplay = ({ timeInMs, roundsValue, currentRound, currentPhase, runni
     // if on first timer and not running = workout not started yet
     if (isFirstTimer && !hasStarted) {
         return (
-            <div className="text-center">
+            <div className="h-full flex flex-col items-center justify-center">
                 <h2 className="text-xl">Ready to workout?</h2>
                 <Button onClick={handleStart}>Start Workout</Button>
             </div>
@@ -34,7 +34,7 @@ const TimerDisplay = ({ timeInMs, roundsValue, currentRound, currentPhase, runni
     // if workout completed
     if (completed) {
         return (
-            <div className="text-center">
+            <div className="h-full flex flex-col items-center justify-center">
                 <h2 className="text-xl text-yellow-200">Workout complete! Way to go!</h2>
                 <Button onClick={handleReset}>Reset Workout</Button>
             </div>
@@ -43,14 +43,14 @@ const TimerDisplay = ({ timeInMs, roundsValue, currentRound, currentPhase, runni
 
     // display timer
     return (
-        <div>
-            <div>
+        <div className="h-full flex flex-col justify-between">
+            <div className="h-[calc(100%-4rem)] flex flex-col">
                 <DisplayTime timeInMs={timeInMs} />
                 {showRounds && roundsValue && currentRound && (
                     <DisplayRounds currentRound={currentRound} totalRounds={roundsValue} phase={showPhase ? currentPhase : undefined} />
                 )}
             </div>
-            <div>
+            <div className="mt-auto space-x-2 h-16 flex items-center justify-center">
                 <ResetButton onClick={handleReset} />
                 <PlayPauseButton onClick={handleStart} isRunning={running} />
                 <FastForwardButton onClick={handleFastForward} />
