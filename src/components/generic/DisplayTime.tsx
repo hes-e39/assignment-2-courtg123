@@ -6,7 +6,6 @@ interface DisplayTimeProps {
 
 export const DisplayTime = ({ timeInMs }: DisplayTimeProps) => {
 
-
     // display formatted time, and style it with Tailwind (style tags source: Tailwind CSS documentation)
     return (
         <div className="flex justify-center w-full flex-1 items-center">

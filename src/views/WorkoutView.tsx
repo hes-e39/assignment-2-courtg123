@@ -2,36 +2,36 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from 'react'
 import { TimerContext } from '../context/TimerContext'
 import { convertToMs } from '../utils/helpers'
+import { Timer } from '../types/timers'
 
 import { Panel } from "../components/generic/Panel";
 import { Button } from "../components/generic/Button";
 
 import TimerDisplay from "../components/timers/display/TimerDisplay";
 
-
-interface Timer {
-  type: string;
-  settings: {
-    totalSeconds?: number;
-    rounds?: number;
-    workSeconds?: number;
-    restSeconds?: number;
-  };
-  state: 'not_started' | 'running' | 'completed';
-}
-
-
 const WorkoutView = () => {
   const navigate = useNavigate();
-  const {timers, removeTimer, running, timeInMs, currentTimer, currentTimerIndex, toggleRunning, currentPhase, currentRound, fastForward, resetWorkout} = useContext(TimerContext)
+  const {
+    timers,
+    removeTimer,
+    running,
+    timeInMs, 
+    currentTimer, 
+    currentTimerIndex, 
+    toggleRunning,
+    currentPhase,
+    currentRound,
+    fastForward,
+    resetWorkout
+  } = useContext(TimerContext)
   
-  // max of 10 timers
+  // Set a max of 10 timers
   const MAX_TIMERS = 10;
 
-  // check if workout started
+  // Check if workout started
   const hasStarted = currentTimer?.state !== 'not_started'
 
-  // get timer details and display it within queue
+  // Get timer details and display it within queue
   const displayTimerDetails = (timer: Timer) => {
     const { type, settings } = timer
     
@@ -55,39 +55,39 @@ const WorkoutView = () => {
     return details;
   }
 
-  // add a timer to the workout
+  // Add a timer to the workout
   const addTimer = () => {
     navigate('/add');
   }
 
-  // edit a timer
+  // Edit a timer
   const editTimer = (index: number) => {
     navigate(`/edit/${index}`)
   }
 
-  // start workout
+  // Start workout
   const runWorkout = () => {
     toggleRunning()
   }
 
-  // reset workout
+  // Reset workout
   const handleReset = () => {
     resetWorkout()
   }
 
-  // fast forward to next timer
+  // Fast forward to next timer
   const handleFastForward = () => {
     fastForward();
   }
 
-  // render current timer display
+  // Render current timer
   const renderCurrentTimer = () => {
     if (!currentTimer) return null;
 
     const isCompleted = timers.every(timer => timer.state === 'completed')
     const isFirstTimer = currentTimerIndex === 0
 
-    // time remaining calculation
+    // Time remaining calculation
     const timeRemainingMs = (() => {
       if (currentTimer.type === 'Countdown') {
         const totalMs = convertToMs(0, currentTimer.settings.totalSeconds || 0)
@@ -96,8 +96,7 @@ const WorkoutView = () => {
       return timeInMs
     })();
 
-
-    // render timer panel
+    // Render timer panel
     return (
       <Panel title={(isFirstTimer && !hasStarted) || isCompleted ? undefined: `Current: ${currentTimer.type}`}>
         <TimerDisplay
@@ -105,7 +104,7 @@ const WorkoutView = () => {
           type={currentTimer.type}
           roundsValue={currentTimer.settings.rounds}
           currentRound={currentRound}
-          currentPhase={currentPhase}
+          currentPhase={currentPhase as 'Work' | 'Rest'}
           running={running}
           completed={isCompleted}
           isFirstTimer={isFirstTimer}
@@ -123,15 +122,14 @@ const WorkoutView = () => {
     )
   }
   
-
-  // show queue of timers
+  // Render queue of timers
   return (
-    <div className="flex flex-col items-center w-full max-w-3xl px-4 mx-auto">
+    <div className="flex flex-col items-center w-full max-w-2xl px-4 mx-auto">
       <h1>Workout</h1>
 
       {renderCurrentTimer()}
 
-      <div className="w-full max-w-xl">
+      <div className="w-full max-w-md">
         {timers.map((timer, index) => (
           <div key={index}
           className={`
@@ -168,7 +166,9 @@ const WorkoutView = () => {
       </div>
       <div>
         {timers.length >= MAX_TIMERS ? (
-          <span className="text-gray-500"><i>You've added the maximum number of timers.</i></span>
+          <span className="text-gray-500">
+            <i>You've added the maximum number of timers.</i>
+          </span>
         ) : (
           <Button onClick={addTimer}>+ Add Timer</Button>
         )}

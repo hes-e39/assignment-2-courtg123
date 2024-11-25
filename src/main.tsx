@@ -8,7 +8,6 @@ import {
 } from "react-router-dom";
 
 import "./index.css";
-import TimersView from "./views/TimersView";
 import DocumentationView from "./views/DocumentationView";
 import WorkoutView from "./views/WorkoutView";
 import AddTimerView from "./views/AddTimerView";
@@ -45,10 +44,6 @@ const router = createHashRouter([
         element: <AddTimerView />,
       },
       {
-        path: "/timers",
-        element: <TimersView />,
-      },
-      {
         path: "/edit/:index",
         element: <AddTimerView />,
       },
@@ -62,9 +57,9 @@ const router = createHashRouter([
 
 // biome-ignore lint/style/noNonNullAssertion: root html element is there
 createRoot(document.getElementById("root")!).render(
-  //<StrictMode>
+  <StrictMode>
     <WorkoutProvider>
       <RouterProvider router={router} />
     </WorkoutProvider>
-  //</StrictMode>
+  </StrictMode>
 );

@@ -13,9 +13,20 @@ interface TabataSettingsProps {
     setRoundsValue: (value: number) => void;
 }
 
-const TabataSettings = ({ workMinValue, workSecValue, restMinValue, restSecValue, roundsValue, setWorkMinValue, setWorkSecValue, setRestMinValue, setRestSecValue, setRoundsValue }: TabataSettingsProps) => {
-
-    // display timer
+const TabataSettings = ({ 
+    workMinValue,
+    workSecValue,
+    restMinValue,
+    restSecValue,
+    roundsValue,
+    setWorkMinValue,
+    setWorkSecValue,
+    setRestMinValue,
+    setRestSecValue,
+    setRoundsValue 
+}: TabataSettingsProps) => {
+    
+    // Display timer settings inputs
     return (
         <div>
             <div className="mt-8 flex flex-row justify-center items-center space-x-8">

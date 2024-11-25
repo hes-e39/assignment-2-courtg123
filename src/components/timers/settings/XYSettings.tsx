@@ -9,9 +9,15 @@ interface XYSettingsProps {
     setRoundsValue: (value: number) => void;
 }
 
-const XYSettings = ({ minValue, secValue, roundsValue, setMinValue, setSecValue, setRoundsValue }: XYSettingsProps) => {
-
-    // display timer
+const XYSettings = ({ 
+    minValue,
+    secValue,
+    roundsValue,
+    setMinValue,
+    setSecValue,
+    setRoundsValue 
+}: XYSettingsProps) => {
+    // Display timer settings inputs
     return (
         <div>
             <div className="mt-8">

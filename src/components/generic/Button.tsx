@@ -8,6 +8,7 @@ interface ButtonProps {
 interface CustomButtonProps {
     onClick: () => void;
     disabled?: boolean;
+    isRunning?: boolean;
 }
 
 export const Button = ({ 

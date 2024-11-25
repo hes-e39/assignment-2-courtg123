@@ -11,23 +11,16 @@ import CountdownSettings from "../components/timers/settings/CountdownSettings";
 import XYSettings from "../components/timers/settings/XYSettings";
 import TabataSettings from "../components/timers/settings/TabataSettings";
 import { convertToMs } from '../utils/helpers';
+import { Timer } from '../types/timers'
 
-interface Timer {
-    type: string;
-    settings: {
-      totalSeconds?: number;
-      rounds?: number;
-      workSeconds?: number;
-      restSeconds?: number;
-    };
-    state: 'not_started' | 'running' | 'completed';
-  }
 
 export default function AddTimer() {
     const navigate = useNavigate()
-    const { index } = useParams()
     const [selectedTimer, setSelectedTimer] = useState<string>('Stopwatch')
     const { timers, addTimer, updateTimer } = useContext(TimerContext)
+
+    // timer index from URL
+    const { index } = useParams()
 
     // state for this timer
     const [minValue, setMinValue] = useState(0);
@@ -38,6 +31,7 @@ export default function AddTimer() {
     const [restSecValue, setRestSecValue] = useState(0);
     const [roundsValue, setRoundsValue] = useState(1);
 
+    // Timer types for dropdown
     const timerOptions = [
         { value: 'Stopwatch', label: 'Stopwatch' },
         { value: 'Countdown', label: 'Countdown' },
@@ -45,12 +39,14 @@ export default function AddTimer() {
         { value: 'Tabata', label: 'Tabata' },
     ]
 
+    // Change timer type when dropdown option selected
     const handleTimerChange = (value: string | number) => {
         if(typeof value === 'string') {
             setSelectedTimer(value)
         }
     }
 
+    // Display timer settings by timer type
     const displayTimer = () => {
         console.log('Timer selected: ', selectedTimer)
         if (selectedTimer === 'Stopwatch') {
@@ -103,11 +99,14 @@ export default function AddTimer() {
         }
     }
 
+    // Load an existing timer
     useEffect(() => {
+        // If not editing existing timer
         if (index === undefined) {
             return;
         }
 
+        // existing timer from the array
         const timer = timers[parseInt(index)]
         if (!timer) {
             return;
@@ -115,32 +114,38 @@ export default function AddTimer() {
 
         setSelectedTimer(timer.type)
 
+        // Settings for Countdown and Stopwatch
         if (timer.type === 'Countdown' || timer.type === 'Stopwatch') {
             const totalSeconds = timer.settings.totalSeconds;
-            setMinValue(Math.floor(totalSeconds / 60));
-            setSecValue(totalSeconds % 60);
+            setMinValue(Math.floor((totalSeconds || 0) / 60));
+            setSecValue((totalSeconds || 0) % 60);
         }
+        // Settings for XY
         else if (timer.type === 'XY') {
             const totalSeconds = timer.settings.totalSeconds;
-            setMinValue(Math.floor(totalSeconds / 60));
-            setSecValue(totalSeconds % 60);
+            setMinValue(Math.floor((totalSeconds || 0) / 60));
+            setSecValue((totalSeconds || 0) % 60);
             setRoundsValue(timer.settings.rounds || 1);
         }
+        // Settings for Tabata
         else if (timer.type === 'Tabata') {
             const workSeconds = timer.settings.workSeconds;
             const restSeconds = timer.settings.restSeconds;
-            setWorkMinValue(Math.floor(workSeconds / 60));
-            setWorkSecValue(workSeconds % 60);
-            setRestMinValue(Math.floor(restSeconds / 60));
-            setRestSecValue(restSeconds % 60);
+            setWorkMinValue(Math.floor((workSeconds || 0) / 60));
+            setWorkSecValue((workSeconds || 0) % 60);
+            setRestMinValue(Math.floor((restSeconds || 0) / 60));
+            setRestSecValue((restSeconds || 0) % 60);
             setRoundsValue(timer.settings.rounds || 1);
         }
-    }, [index, timers])
+    }, [index, timers]) // Added dependencies for timer index and timers = re-run if index or array changes
 
+    // Save timer with settings
     const handleSave = () => {
         let settings = {};
 
+        // if timer is Countdown or Stopwatch
         if (selectedTimer === 'Countdown' || selectedTimer === 'Stopwatch') {
+            // minutes and seconds cannot be 0
             if (minValue === 0 && secValue === 0) {
                 alert('Timer time must be greater than 0')
                 return
@@ -148,7 +153,9 @@ export default function AddTimer() {
             const totalSeconds = convertToMs(minValue, secValue) / 1000;
             settings = { totalSeconds };
         }
+        // if timer is XY
         else if (selectedTimer === 'XY') {
+            // minutes and seconds cannot be 0
             if (minValue === 0 && secValue === 0) {
                 alert('Timer time must be greater than 0')
                 return
@@ -159,12 +166,13 @@ export default function AddTimer() {
                 rounds: roundsValue
             }
         }
+        // if timer is Tabata
         else if (selectedTimer === 'Tabata') {
             if ((workMinValue === 0 && workSecValue === 0) || (restMinValue === 0 && restSecValue === 0)) {
                 alert('Timer work and rest times must be greater than 0')
                 return
             }
-            
+
             const workSeconds = convertToMs(workMinValue, workSecValue) / 1000;
             const restSeconds = convertToMs(restMinValue, restSecValue) / 1000;
             settings = {
@@ -174,13 +182,14 @@ export default function AddTimer() {
             }
         }
 
+        // Create timer with settings
         const timerWithSettings: Timer = {
             type: selectedTimer,
             settings,
             state: 'not_started'
         }
         
-        // if not editing an existing timer, add as new
+        // If not editing an existing timer, add as new
         if (index !== undefined) {
             updateTimer(parseInt(index), timerWithSettings)
         } else {
@@ -190,6 +199,7 @@ export default function AddTimer() {
         navigate('/')
     }
 
+    // Display timer settings inputs
     return (
         <div className="flex flex-col items-center">
             <h1>Update Timer</h1>

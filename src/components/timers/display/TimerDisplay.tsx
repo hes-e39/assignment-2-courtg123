@@ -2,6 +2,7 @@ import { DisplayTime } from '../../generic/DisplayTime'
 import { DisplayRounds } from '../../generic/DisplayRounds'
 import { Button, PlayPauseButton, FastForwardButton, ResetButton } from '../../generic/Button'
 
+
 interface TimerDisplayProps {
     timeInMs: number;
     type: string;
@@ -17,11 +18,24 @@ interface TimerDisplayProps {
     handleFastForward: () => void;
 }
 
-const TimerDisplay = ({ timeInMs, roundsValue, currentRound, currentPhase, running, completed, type, hasStarted, isFirstTimer, handleStart, handleReset, handleFastForward }: TimerDisplayProps) => {
+const TimerDisplay = ({ 
+    timeInMs, 
+    roundsValue, 
+    currentRound, 
+    currentPhase, 
+    running, 
+    completed, 
+    type, 
+    hasStarted, 
+    isFirstTimer, 
+    handleStart, 
+    handleReset, 
+    handleFastForward
+ }: TimerDisplayProps) => {
     const showRounds = type === 'XY' || type === 'Tabata'
     const showPhase = type === 'Tabata'
 
-    // if on first timer and not running = workout not started yet
+    // If first timer and not started
     if (isFirstTimer && !hasStarted) {
         return (
             <div className="h-full flex flex-col items-center justify-center">
@@ -31,7 +45,7 @@ const TimerDisplay = ({ timeInMs, roundsValue, currentRound, currentPhase, runni
         )
     }
 
-    // if workout completed
+    // If workout completed
     if (completed) {
         return (
             <div className="h-full flex flex-col items-center justify-center">
@@ -41,13 +55,17 @@ const TimerDisplay = ({ timeInMs, roundsValue, currentRound, currentPhase, runni
         )
     }
 
-    // display timer
+    // Display timer
     return (
         <div className="h-full flex flex-col justify-between">
             <div className="h-[calc(100%-4rem)] flex flex-col">
                 <DisplayTime timeInMs={timeInMs} />
                 {showRounds && roundsValue && currentRound && (
-                    <DisplayRounds currentRound={currentRound} totalRounds={roundsValue} phase={showPhase ? currentPhase : undefined} />
+                    <DisplayRounds 
+                        currentRound={currentRound} 
+                        totalRounds={roundsValue} 
+                        phase={showPhase ? currentPhase : undefined} 
+                    />
                 )}
             </div>
             <div className="mt-auto space-x-2 h-16 flex items-center justify-center">

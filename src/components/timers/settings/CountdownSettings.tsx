@@ -8,7 +8,7 @@ interface CountdownProps {
 }
 
 const Countdown = ({ minValue, secValue, setMinValue, setSecValue }: CountdownProps) => {
-    // display timer
+    // Display timer settings inputs
     return (
         <div>
             <div className="mt-8 flex flex-row justify-center items-center">

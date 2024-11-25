@@ -8,7 +8,7 @@ interface StopwatchSettingsProps {
 }
 
 const StopwatchSettings = ({ minValue, secValue, setMinValue, setSecValue }: StopwatchSettingsProps) => {   
-    // display timer
+    // Display timer settings inputs
     return (
         <div>
             <div className="mt-8 flex flex-row justify-center items-center">
