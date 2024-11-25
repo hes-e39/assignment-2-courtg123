@@ -8,18 +8,21 @@ interface TimerDisplayProps {
     currentRound?: number;
     currentPhase?: 'Work' | 'Rest';
     running: boolean;
-    completed: boolean;
-    onStart: () => void;
 }
 
-const TabataDisplay = ({ timeInMs, roundsValue, currentRound, currentPhase }: TabataDisplayProps) => {
+const TimerDisplay = ({ timeInMs, roundsValue, currentRound, currentPhase, running, type }: TimerDisplayProps) => {
+    const showRounds = type === 'XY' || type === 'Tabata'
+    const showPhase = type === 'Tabata'
+
     // display timer
     return (
         <div>
             <DisplayTime timeInMs={timeInMs} />
-            <DisplayRounds currentRound={currentRound} totalRounds={roundsValue} phase={currentPhase} />
+            {showRounds && roundsValue && currentRound && (
+                <DisplayRounds currentRound={currentRound} totalRounds={roundsValue} phase={showPhase ? currentPhase : undefined} />
+            )}
         </div>
     );
 }
 
-export default TabataDisplay;
+export default TimerDisplay;

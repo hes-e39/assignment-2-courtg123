@@ -6,10 +6,7 @@ import { convertToMs } from '../utils/helpers'
 import { Panel } from "../components/generic/Panel";
 import { Button, PlayPauseButton, FastForwardButton, ResetButton } from "../components/generic/Button";
 
-import StopwatchDisplay from "../components/timers/display/StopwatchDisplay";
-import CountdownDisplay from "../components/timers/display/CountdownDisplay";
-import XYDisplay from "../components/timers/display/XYDisplay";
-import TabataDisplay from "../components/timers/display/TabataDisplay";
+import TimerDisplay from "../components/timers/display/TimerDisplay";
 
 
 interface Timer {
@@ -31,7 +28,7 @@ const WorkoutView = () => {
   // max of 10 timers
   const MAX_TIMERS = 10;
 
-  // get timer details and display it
+  // get timer details and display it within queue
   const displayTimerDetails = (timer: Timer) => {
     const { type, settings } = timer
     
@@ -56,33 +53,34 @@ const WorkoutView = () => {
     return details;
   }
 
+  // add a timer to the workout
   const addTimer = () => {
-    console.log("Open add timer")
     navigate('/add');
   }
 
   // edit a timer
   const editTimer = (index: number) => {
-    console.log(`Open ${index} timer (for editing)`)
     navigate(`/edit/${index}`)
   }
 
+  // start workout
   const runWorkout = () => {
-    console.log("Start workout")
     toggleRunning()
   }
 
+  // reset workout
   const handleReset = () => {
     resetWorkout()
   }
 
+  // fast forward to next timer
   const handleFastForward = () => {
     fastForward();
   }
 
-  // current timer display
+  // render current timer display
   const renderCurrentTimer = () => {
-    if (!currentTimer || !running) return null;
+    if (!currentTimer) return null;
 
     // time remaining calculation
     const timeRemainingMs = (() => {
@@ -103,45 +101,17 @@ const WorkoutView = () => {
     })();
 
 
-    
-    const getTimerDisplay = () => {
-      if (currentTimer.type === 'Countdown') {
-        return <CountdownDisplay timeInMs={timeRemainingMs} />
-      }
-      if (currentTimer.type === 'Stopwatch') {
-        return <StopwatchDisplay timeInMs={timeRemainingMs} />
-      }
-      if (currentTimer.type === 'XY') {
-        return (
-          <XYDisplay
-            timeInMs={timeInMs}
-            roundsValue={currentTimer.settings.rounds}
-            currentRound={currentRound}
-            minValue={Math.floor(currentTimer.settings.totalSeconds / 60)}
-            secValue={currentTimer.settings.totalSeconds % 60}
-          />
-        )
-      }
-      if (currentTimer.type === 'Tabata') {
-        return (
-          <TabataDisplay
-            timeInMs={timeInMs}
-            roundsValue = {currentTimer.settings.rounds}
-            currentRound={currentRound}
-            currentPhase={currentPhase}
-            workMinValue = {Math.floor(currentTimer.settings.workSeconds) / 60}
-            workSecValue = {currentTimer.settings.workSeconds % 60}
-            restMinValue = {Math.floor(currentTimer.settings.restSeconds) / 60}
-            restSecValue = {currentTimer.settings.restSeconds % 60}
-          />
-        )
-      }
-      return null
-    }
-
+    // render timer panel
     return (
       <Panel title={`Current: ${currentTimer.type}`}>
-        {getTimerDisplay()}
+        <TimerDisplay
+          timeInMs={timeRemainingMs}
+          type={currentTimer.type}
+          roundsValue={currentTimer.settings.rounds}
+          currentRound={currentRound}
+          currentPhase={currentPhase}
+          running={running}
+        />
         <div className="text-sm text-gray-400 mt-2">
           {displayTimerDetails(currentTimer)}
         </div>
@@ -151,6 +121,7 @@ const WorkoutView = () => {
   
 
   // show queue of timers
+  // TO DO fix issue where first timer not editable/removable
   return (
     <div className="flex flex-col items-center w-full max-w-3xl px-4 mx-auto">
       <h1>Workout</h1>
@@ -175,8 +146,18 @@ const WorkoutView = () => {
               {displayTimerDetails(timer)}
             </div>
             <div className="flex gap-2 ml-4">
-              <Button onClick={() => editTimer(index)}>Edit</Button>
-              <Button onClick={() => removeTimer(index)}>Remove</Button><br />
+              <Button
+                onClick={() => editTimer(index)}
+                disabled={index <= currentTimerIndex || timer.state === 'completed'}
+              >
+                Edit
+              </Button>
+              <Button
+                onClick={() => removeTimer(index)}
+                disabled={index <= currentTimerIndex || timer.state === 'completed'}
+              >
+                Remove
+              </Button>
             </div>
           </div>
         ))}
