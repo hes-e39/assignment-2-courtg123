@@ -167,21 +167,15 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
 
                     // Complete timer
                     const completeCurrentTimer = () => {
-                        console.log('current timer index: ', currentTimerIndex)
-                        console.log('current timer: ', timers[currentTimerIndex])
-
                         const newTimers = [...timers]
                         newTimers[currentTimerIndex].state = 'completed'
                         setTimers(newTimers)
-                        console.log('timer completed')
 
                         // If no more timers, complete workout
                         if (currentTimerIndex < timers.length - 1) {
                             const nextIndex = currentTimerIndex + 1
-                            console.log('next timer')
-                            console.log('next index: ', nextIndex)
 
-                            // Update the next timer index (so it re-renders)
+                            // Update the next timer index
                             setCurrentTimerIndex(nextIndex)
                             return 0
                         } else {
