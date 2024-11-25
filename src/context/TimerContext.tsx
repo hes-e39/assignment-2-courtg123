@@ -152,15 +152,13 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
         setTimers(newTimers)
     }
 
-    // TO DO: Fix timer bug - skipping every other timer
-    // TO DO: Custom Hooks maybe?
+
     // Workout timer hook
     useEffect(() => {
         if (running && currentTimer) {
             // Initialize timer
             if (currentTimer.state === 'not_started') {
                 initializeTimer(currentTimer)
-                console.log('initializing timer index: ', currentTimerIndex) // every other timer initializing
             }
 
             // Timer interval of 10ms
@@ -179,10 +177,12 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
 
                         // If no more timers, complete workout
                         if (currentTimerIndex < timers.length - 1) {
-                            const nextIndex = setCurrentTimerIndex(prev => prev +1)
+                            const nextIndex = currentTimerIndex + 1
                             console.log('next timer')
                             console.log('next index: ', nextIndex)
 
+                            // Update the next timer index (so it re-renders)
+                            setCurrentTimerIndex(nextIndex)
                             return 0
                         } else {
                             setRunning(false)
