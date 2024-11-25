@@ -4,7 +4,7 @@ import { TimerContext } from '../context/TimerContext'
 import { convertToMs } from '../utils/helpers'
 
 import { Panel } from "../components/generic/Panel";
-import { Button, PlayPauseButton, FastForwardButton, ResetButton } from "../components/generic/Button";
+import { Button } from "../components/generic/Button";
 
 import TimerDisplay from "../components/timers/display/TimerDisplay";
 
@@ -34,7 +34,6 @@ const WorkoutView = () => {
     
     let details = `${type}: `;
 
-    
     if (settings.rounds) {
       details += `${settings.rounds} Rounds x `
     }
@@ -82,20 +81,15 @@ const WorkoutView = () => {
   const renderCurrentTimer = () => {
     if (!currentTimer) return null;
 
+    const isCompleted = timers.every(timer => timer.state === 'completed')
+    const isFirstTimer = currentTimerIndex === 0
+    const hasStarted = currentTimer.state !== 'not_started'
+
     // time remaining calculation
     const timeRemainingMs = (() => {
       if (currentTimer.type === 'Countdown') {
         const totalMs = convertToMs(0, currentTimer.settings.totalSeconds || 0)
         return Math.max(0, totalMs - timeInMs)
-      }
-      else if (currentTimer.type === 'Stopwatch') {
-        return timeInMs
-      }
-      else if (currentTimer.type === 'XY') {
-        return timeInMs
-      }
-      else if (currentTimer.type === 'Tabata') {
-        return timeInMs
       }
       return timeInMs
     })();
@@ -103,7 +97,7 @@ const WorkoutView = () => {
 
     // render timer panel
     return (
-      <Panel title={`Current: ${currentTimer.type}`}>
+      <Panel title={(isFirstTimer && !hasStarted) || isCompleted ? undefined: `Current: ${currentTimer.type}`}>
         <TimerDisplay
           timeInMs={timeRemainingMs}
           type={currentTimer.type}
@@ -111,17 +105,24 @@ const WorkoutView = () => {
           currentRound={currentRound}
           currentPhase={currentPhase}
           running={running}
+          completed={isCompleted}
+          isFirstTimer={isFirstTimer}
+          hasStarted={hasStarted}
+          handleStart={runWorkout}
+          handleReset={handleReset}
+          handleFastForward={handleFastForward}
         />
-        <div className="text-sm text-gray-400 mt-2">
-          {displayTimerDetails(currentTimer)}
-        </div>
+        {!((isFirstTimer && !hasStarted) || isCompleted) && (
+          <div className="text-sm text-gray-400 mt-2">
+            {displayTimerDetails(currentTimer)}
+          </div>
+        )}
       </Panel>
     )
   }
   
 
   // show queue of timers
-  // TO DO fix issue where first timer not editable/removable
   return (
     <div className="flex flex-col items-center w-full max-w-3xl px-4 mx-auto">
       <h1>Workout</h1>
@@ -169,11 +170,6 @@ const WorkoutView = () => {
         ) : (
           <Button onClick={addTimer}>+ Add Timer</Button>
         )}
-      </div>
-      <div>
-        <ResetButton onClick={handleReset} disabled={timers.length === 0} />
-        <PlayPauseButton onClick={runWorkout} disabled={timers.length === 0} />
-        <FastForwardButton onClick={handleFastForward} disabled={timers.length === 0} />
       </div>
     </div>
   );

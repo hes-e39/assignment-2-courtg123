@@ -81,7 +81,7 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
         setTimers(newTimers)
 
         // next timer or complete workout
-        if (currentTimerIndex <= timers.length -1) {
+        if (currentTimerIndex < timers.length - 1) {
             setCurrentTimerIndex(prev => prev + 1)
             setCurrentRound(1)
             setCurrentPhase('Work')
