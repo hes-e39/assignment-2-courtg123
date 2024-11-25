@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from 'react'
 import { TimerContext, displayTimerDetails } from '../context/TimerContext'
 import { convertToMs } from '../utils/helpers'
-import { Timer, TimerPhase } from '../types/timers'
+import { TimerPhase } from '../types/timers'
 
 import { Panel } from "../components/generic/Panel";
 import { Button } from "../components/generic/Button";
