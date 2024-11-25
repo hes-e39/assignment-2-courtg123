@@ -7,7 +7,12 @@ interface StopwatchSettingsProps {
     setSecValue: (value: number) => void;
 }
 
-const StopwatchSettings = ({ minValue, secValue, setMinValue, setSecValue }: StopwatchSettingsProps) => {   
+const StopwatchSettings = ({ 
+    minValue, 
+    secValue, 
+    setMinValue, 
+    setSecValue 
+}: StopwatchSettingsProps) => {   
     // Display timer settings inputs
     return (
         <div>

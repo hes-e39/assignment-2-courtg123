@@ -93,6 +93,12 @@ const Documentation = () => {
               description: "Sets button to a disabled state",
               type: "boolean",
               defaultValue: "false",
+            },
+            {
+              prop: "isRunning",
+              description: "Controls if running or paused",
+              type: "boolean",
+              defaultValue: "false",
             }
           ]}
         />
@@ -230,7 +236,7 @@ const Documentation = () => {
               prop: "value",
               description: "The current selected value",
               type: "string | number",
-              defaultValue: "none (required)",
+              defaultValue: "''''",
             },
             {
               prop: "options",
@@ -242,13 +248,13 @@ const Documentation = () => {
               prop: "className",
               description: "Adds css classes to the select input",
               type: "string",
-              defaultValue: "none (required)",
+              defaultValue: "''",
             },
             {
               prop: "onChange",
               description: "Function called when the selection changes",
               type: "(value: string | number) => void",
-              defaultValue: "none (required)",
+              defaultValue: "undefined",
             },
             {
               prop: "disabled",
@@ -300,7 +306,7 @@ const Documentation = () => {
             },
             {
               prop: "phase",
-              description: "The current round number",
+              description: "The current phase of the timer",
               type: "'Work' | 'Rest' | undefined",
               defaultValue: "undefined",
             },

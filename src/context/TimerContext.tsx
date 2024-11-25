@@ -55,9 +55,6 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
     const toggleRunning = () => {
 
         const newRunningState = !running;
-        console.log('Workout running: ', newRunningState);
-        console.log('Current timer index: ', currentTimerIndex);
-        console.log('Current timer: ', currentTimer);
         setRunning(newRunningState)
     }
 
@@ -76,7 +73,6 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
                 return 0
             } else {
                 setRunning(false)
-                alert('Workout complete!')
                 return 0
             }
     }
@@ -141,7 +137,6 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
                             return 0
                         } else {
                             setRunning(false)
-                            alert('Workout complete!')
                             return 0
                         }
                     }

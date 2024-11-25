@@ -7,7 +7,12 @@ interface CountdownProps {
     setSecValue: (value: number) => void;
 }
 
-const Countdown = ({ minValue, secValue, setMinValue, setSecValue }: CountdownProps) => {
+const Countdown = ({ 
+    minValue,
+    secValue,
+    setMinValue,
+    setSecValue 
+}: CountdownProps) => {
     // Display timer settings inputs
     return (
         <div>

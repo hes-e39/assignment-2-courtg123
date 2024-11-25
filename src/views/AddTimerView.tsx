@@ -13,7 +13,6 @@ import TabataSettings from "../components/timers/settings/TabataSettings";
 import { convertToMs } from '../utils/helpers';
 import { Timer } from '../types/timers'
 
-
 export default function AddTimer() {
     const navigate = useNavigate()
     const [selectedTimer, setSelectedTimer] = useState<string>('Stopwatch')
@@ -48,7 +47,6 @@ export default function AddTimer() {
 
     // Display timer settings by timer type
     const displayTimer = () => {
-        console.log('Timer selected: ', selectedTimer)
         if (selectedTimer === 'Stopwatch') {
             return (
             <StopwatchSettings
@@ -195,7 +193,6 @@ export default function AddTimer() {
         } else {
             addTimer(timerWithSettings)
         }
-        console.log('Save timer: ', selectedTimer)
         navigate('/')
     }
 
