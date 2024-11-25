@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { useContext } from 'react'
 import { TimerContext } from '../context/TimerContext'
@@ -13,7 +12,6 @@ import XYDisplay from "../components/timers/display/XYDisplay";
 import TabataDisplay from "../components/timers/display/TabataDisplay";
 
 
-
 interface Timer {
   type: string;
   settings: {
@@ -25,12 +23,6 @@ interface Timer {
   state: 'not_started' | 'running' | 'completed';
 }
 
-// Workout Flow...
-// click start workout: sets state = running, timer index is 0... then start first timer at index 0
-// if timer is a countdown or stopwatch - count to totalSeconds
-// if timer is XY - count to totalSeconds for x number of rounds (repeat/loop)
-// if timer is Tabata - count work seconds + rest seconds for x number of rounds (repeat/loop)
-// timer ends: mark as done, go to next timer. if no next timer, end workout
 
 const WorkoutView = () => {
   const navigate = useNavigate();
@@ -45,14 +37,20 @@ const WorkoutView = () => {
     
     let details = `${type}: `;
 
-    if (settings.totalSeconds) {
-      details += `${Math.floor(settings.totalSeconds / 60)}min ${settings.totalSeconds % 60}sec `;
-    }
+    
     if (settings.rounds) {
-      details += `${settings.rounds} rounds`
+      details += `${settings.rounds} Rounds x `
+    }
+    if (settings.totalSeconds) {
+      details += `${Math.floor(settings.totalSeconds / 60)} min ${settings.totalSeconds % 60} sec `;
     }
     if (settings.workSeconds && settings.restSeconds) {
-      details += ` (${settings.workSeconds}sec work / ${settings.restSeconds}sec rest)`;
+      const workMin = Math.floor(settings.workSeconds / 60)
+      const workSec = settings.workSeconds % 60
+      const restMin = Math.floor(settings.restSeconds / 60)
+      const restSec = settings.restSeconds % 60
+
+      details += `(${workMin}min ${workSec} sec Work & ${restMin} sec ${restSec}sec Rest)`;
     }
 
     return details;
@@ -79,9 +77,7 @@ const WorkoutView = () => {
   }
 
   const handleFastForward = () => {
-    if (running) {
-      fastForward();
-    }
+    fastForward();
   }
 
   // current timer display
@@ -156,7 +152,7 @@ const WorkoutView = () => {
 
   // show queue of timers
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center w-full ">
       <h1>Workout</h1>
 
       {renderCurrentTimer()}

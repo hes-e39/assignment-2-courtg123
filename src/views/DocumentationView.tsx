@@ -320,8 +320,8 @@ const Documentation = () => {
             {
               prop: "title",
               description: "The panel title",
-              type: "string",
-              defaultValue: "none (required)",
+              type: "string | undefined",
+              defaultValue: "undefined",
             },
             {
               prop: "children",
