@@ -130,30 +130,37 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
         }
     }
 
+    // Initialize timer
+    const initializeTimer = (currentTimer: Timer) => {
+        if (currentTimer.type === 'Tabata') {
+            setTimeInMs((currentTimer.settings.workSeconds || 0) * 1000);
+            setCurrentPhase('Work');
+            setCurrentRound(1);
+            const newTimers = [...timers];
+            newTimers[currentTimerIndex].state = 'running';
+            setTimers(newTimers);
+        } else if (currentTimer.type === 'XY') {
+            setTimeInMs((currentTimer.settings.totalSeconds || 0) * 1000)
+            setCurrentRound(1)
+        } else if (currentTimer.type === 'Countdown') {
+            setTimeInMs((currentTimer.settings.totalSeconds || 0) * 1000)
+        } else {
+            setTimeInMs(0)
+        }
+        const newTimers = [...timers]
+        newTimers[currentTimerIndex].state = 'running'
+        setTimers(newTimers)
+    }
+
+    // TO DO: Fix timer bug - skipping every other timer
     // TO DO: Custom Hooks maybe?
     // Workout timer hook
     useEffect(() => {
         if (running && currentTimer) {
             // Initialize timer
             if (currentTimer.state === 'not_started') {
-                if (currentTimer.type === 'Tabata') {
-                    setTimeInMs((currentTimer.settings.workSeconds || 0) * 1000);
-                    setCurrentPhase('Work');
-                    setCurrentRound(1);
-                    const newTimers = [...timers];
-                    newTimers[currentTimerIndex].state = 'running';
-                    setTimers(newTimers);
-                } else if (currentTimer.type === 'XY') {
-                    setTimeInMs((currentTimer.settings.totalSeconds || 0) * 1000)
-                    setCurrentRound(1)
-                } else if (currentTimer.type === 'Countdown') {
-                    setTimeInMs((currentTimer.settings.totalSeconds || 0) * 1000)
-                } else {
-                    setTimeInMs(0)
-                }
-                const newTimers = [...timers]
-                newTimers[currentTimerIndex].state = 'running'
-                setTimers(newTimers)
+                initializeTimer(currentTimer)
+                console.log('initializing timer index: ', currentTimerIndex) // every other timer initializing
             }
 
             // Timer interval of 10ms
@@ -162,13 +169,20 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
 
                     // Complete timer
                     const completeCurrentTimer = () => {
+                        console.log('current timer index: ', currentTimerIndex)
+                        console.log('current timer: ', timers[currentTimerIndex])
+
                         const newTimers = [...timers]
                         newTimers[currentTimerIndex].state = 'completed'
                         setTimers(newTimers)
+                        console.log('timer completed')
 
                         // If no more timers, complete workout
                         if (currentTimerIndex < timers.length - 1) {
-                            setCurrentTimerIndex(prev => prev +1)
+                            const nextIndex = setCurrentTimerIndex(prev => prev +1)
+                            console.log('next timer')
+                            console.log('next index: ', nextIndex)
+
                             return 0
                         } else {
                             setRunning(false)
