@@ -44,7 +44,7 @@ const TimerSettings = ({
         <div>
             <div className="mt-8 flex flex-row justify-center items-center space-x-8">
                 {!tabataTimer ? (
-                    <div className="mt-8 mb-6">
+                    <div>
                         <div>
                             <p className="font-bold mb-2">Time</p>
                         </div>
@@ -64,23 +64,23 @@ const TimerSettings = ({
                         </div>
                     </div>
                 ) : (
-                    <div>
+                    <div className=" flex flex-row justify-center items-center space-x-8">
                         <div className="mb-6">
                             <p className="font-bold mb-2">Work</p>
-                        </div>
-                        <div className="flex flex-row justify-center items-center">
-                            <Input
-                                label="Min"
-                                value={workMinValue}
-                                onChange={setWorkMinValue}
-                                placeholder="#"
-                            />
-                            <Input
-                                label="Sec"
-                                value={workSecValue}
-                                onChange={setWorkSecValue}
-                                placeholder="#"
-                            />
+                            <div className="flex flex-row justify-center items-center">
+                                <Input
+                                    label="Min"
+                                    value={workMinValue}
+                                    onChange={setWorkMinValue}
+                                    placeholder="#"
+                                />
+                                <Input
+                                    label="Sec"
+                                    value={workSecValue}
+                                    onChange={setWorkSecValue}
+                                    placeholder="#"
+                                />
+                            </div>
                         </div>
                     
                         <div className="mb-6">
@@ -112,7 +112,6 @@ const TimerSettings = ({
                     placeholder="#"
                 />
             )}
-                     
         </div>
     );
 };

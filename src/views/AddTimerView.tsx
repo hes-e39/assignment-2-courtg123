@@ -19,13 +19,10 @@ export default function AddTimer() {
     const { index } = useParams()
 
     // state for this timer
-    const [minValue, setMinValue] = useState(0);
-    const [secValue, setSecValue] = useState(0);
-    const [workMinValue, setWorkMinValue] = useState(0);
-    const [workSecValue, setWorkSecValue] = useState(0);
-    const [restMinValue, setRestMinValue] = useState(0);
-    const [restSecValue, setRestSecValue] = useState(0);
     const [roundsValue, setRoundsValue] = useState(1);
+    const [timerTime, setTimerTime] = useState({ minutes: 0, seconds: 0});
+    const [workTime, setWorkTime] = useState({ minutes: 0, seconds: 0 });
+    const [restTime, setRestTime] = useState({ minutes: 0, seconds: 0})
 
     // Timer types for dropdown
     const timerOptions = [
@@ -48,10 +45,10 @@ export default function AddTimer() {
             return (
             <TimerSettings
                 type={selectedTimer}
-                minValue={minValue}
-                secValue={secValue}
-                setMinValue={setMinValue}
-                setSecValue={setSecValue}
+                minValue={timerTime.minutes}
+                secValue={timerTime.seconds}
+                setMinValue={(value) => setTimerTime({ ...timerTime, minutes: value })}
+                setSecValue={(value) => setTimerTime({ ...timerTime, seconds: value })}
             />
             )
         }
@@ -59,11 +56,11 @@ export default function AddTimer() {
             return (
             <TimerSettings
                 type={selectedTimer}
-                minValue={minValue}
-                secValue={secValue}
+                minValue={timerTime.minutes}
+                secValue={timerTime.seconds}
                 roundsValue={roundsValue}
-                setMinValue={setMinValue}
-                setSecValue={setSecValue}
+                setMinValue={(value) => setTimerTime({ ...timerTime, minutes: value })}
+                setSecValue={(value) => setTimerTime({ ...timerTime, seconds: value })}
                 setRoundsValue={setRoundsValue}
             />
             )
@@ -72,15 +69,15 @@ export default function AddTimer() {
             return (
             <TimerSettings
                 type={selectedTimer}
-                workMinValue={workMinValue}
-                workSecValue={workSecValue}
-                restMinValue={restMinValue}
-                restSecValue={restSecValue}
+                workMinValue={workTime.minutes}
+                workSecValue={workTime.seconds}
+                restMinValue={restTime.minutes}
+                restSecValue={restTime.seconds}
                 roundsValue={roundsValue}
-                setWorkMinValue={setWorkMinValue}
-                setWorkSecValue={setWorkSecValue}
-                setRestMinValue={setRestMinValue}
-                setRestSecValue={setRestSecValue}
+                setWorkMinValue={(value) => setWorkTime({ ...workTime, minutes: value })}
+                setWorkSecValue={(value) => setWorkTime({ ...workTime, seconds: value })}
+                setRestMinValue={(value) => setRestTime({ ...restTime, minutes: value })}
+                setRestSecValue={(value) => setRestTime({ ...restTime, seconds: value })}
                 setRoundsValue={setRoundsValue}
             />
             )
@@ -105,24 +102,20 @@ export default function AddTimer() {
         // Settings for Countdown and Stopwatch
         if (timer.type === 'Countdown' || timer.type === 'Stopwatch') {
             const totalSeconds = timer.settings.totalSeconds;
-            setMinValue(Math.floor((totalSeconds || 0) / 60));
-            setSecValue((totalSeconds || 0) % 60);
+            setTimerTime({ minutes: Math.floor((totalSeconds || 0) / 60), seconds: (totalSeconds || 0) % 60});
         }
         // Settings for XY
         else if (timer.type === 'XY') {
             const totalSeconds = timer.settings.totalSeconds;
-            setMinValue(Math.floor((totalSeconds || 0) / 60));
-            setSecValue((totalSeconds || 0) % 60);
+            setTimerTime({ minutes: Math.floor((totalSeconds || 0) / 60), seconds: (totalSeconds || 0) % 60});
             setRoundsValue(timer.settings.rounds || 1);
         }
         // Settings for Tabata
         else if (timer.type === 'Tabata') {
             const workSeconds = timer.settings.workSeconds;
             const restSeconds = timer.settings.restSeconds;
-            setWorkMinValue(Math.floor((workSeconds || 0) / 60));
-            setWorkSecValue((workSeconds || 0) % 60);
-            setRestMinValue(Math.floor((restSeconds || 0) / 60));
-            setRestSecValue((restSeconds || 0) % 60);
+            setWorkTime({ minutes: Math.floor((workSeconds || 0) / 60), seconds: (workSeconds || 0) % 60});
+            setRestTime({ minutes: Math.floor((restSeconds || 0) / 60), seconds: (restSeconds || 0) % 60});
             setRoundsValue(timer.settings.rounds || 1);
         }
     }, [index, timers]) // Added dependencies for timer index and timers = re-run if index or array changes
@@ -134,21 +127,21 @@ export default function AddTimer() {
         // if timer is Countdown or Stopwatch
         if (selectedTimer === 'Countdown' || selectedTimer === 'Stopwatch') {
             // minutes and seconds cannot be 0
-            if (minValue === 0 && secValue === 0) {
+            if (timerTime.minutes === 0 && timerTime.seconds === 0) {
                 alert('Timer time must be greater than 0')
                 return
             }
-            const totalSeconds = convertToMs(minValue, secValue) / 1000;
+            const totalSeconds = convertToMs(timerTime.minutes, timerTime.seconds) / 1000;
             settings = { totalSeconds };
         }
         // if timer is XY
         else if (selectedTimer === 'XY') {
             // minutes and seconds cannot be 0
-            if (minValue === 0 && secValue === 0) {
+            if (timerTime.minutes === 0 && timerTime.seconds === 0) {
                 alert('Timer time must be greater than 0')
                 return
             }
-            const totalSeconds = convertToMs(minValue, secValue) / 1000;
+            const totalSeconds = convertToMs(timerTime.minutes, timerTime.seconds) / 1000;
             settings = {
                 totalSeconds,
                 rounds: roundsValue
@@ -156,13 +149,13 @@ export default function AddTimer() {
         }
         // if timer is Tabata
         else if (selectedTimer === 'Tabata') {
-            if ((workMinValue === 0 && workSecValue === 0) || (restMinValue === 0 && restSecValue === 0)) {
+            if ((workTime.minutes === 0 && workTime.seconds === 0) || (restTime.minutes === 0 && restTime.seconds === 0)) {
                 alert('Timer work and rest times must be greater than 0')
                 return
             }
 
-            const workSeconds = convertToMs(workMinValue, workSecValue) / 1000;
-            const restSeconds = convertToMs(restMinValue, restSecValue) / 1000;
+            const workSeconds = convertToMs(workTime.minutes, workTime.seconds) / 1000;
+            const restSeconds = convertToMs(restTime.minutes, restTime.seconds) / 1000;
             settings = {
                 workSeconds,
                 restSeconds,

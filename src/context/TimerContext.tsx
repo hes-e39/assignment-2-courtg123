@@ -1,5 +1,5 @@
-import { createContext, useState, useEffect } from 'react'
-import { Timer, TimerPhase } from '../types/timers'
+import { createContext, useState, useEffect, useRef } from 'react'
+import { Timer } from '../types/timers'
 
 // Global context for Timer
 export const TimerContext = createContext({
@@ -42,6 +42,7 @@ export const displayTimerDetails = (timer: Timer) => {
     return details;
   }
 
+
 // Workout functionality
 export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
     const [timers, setTimers] = useState<Timer[]>([]);
@@ -50,6 +51,7 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
     const [currentTimerIndex, setCurrentTimerIndex] = useState(0);
     const [currentPhase, setCurrentPhase] = useState<'Work' | 'Rest'>('Work')
     const [currentRound, setCurrentRound] = useState(1)
+    const intervalRef = useRef<number>();
 
     // Current timer by index
     const currentTimer = timers[currentTimerIndex] || null;
@@ -104,7 +106,6 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
     // Reset workout
     const resetWorkout = () => {
         setRunning(false)
-        setTimeInMs(0)
         setCurrentTimerIndex(0)
         setCurrentRound(1)
         setCurrentPhase('Work')
@@ -115,14 +116,23 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
             state: 'not_started' as const
         }))
         setTimers(resetTimers)
+
+        // if not stopwatch, set initial reset time - maybe not necessary since we go back to "start workout"?
+        const firstTimer = timers[0]
+        if (firstTimer) {
+            if(firstTimer.type === 'Stopwatch') {
+                setTimeInMs(0)
+            } else if (firstTimer.type === 'Tabata') {
+                setTimeInMs((firstTimer.settings.workSeconds || 0) * 1000)
+            } else {
+                setTimeInMs((firstTimer.settings.totalSeconds || 0) * 1000)
+            }
+        }
     }
 
     // TO DO: Custom Hooks maybe?
     // Workout timer hook
     useEffect(() => {
-        // Interval
-        let interval: number | undefined;
-
         if (running && currentTimer) {
             // Initialize timer
             if (currentTimer.state === 'not_started') {
@@ -147,7 +157,7 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
             }
 
             // Timer interval of 10ms
-            interval = setInterval(() => {
+            intervalRef.current = setInterval(() => {
                 setTimeInMs(prevTime => {
 
                     // Complete timer
@@ -219,7 +229,8 @@ export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
 
         // Clear the interval
         return () => {
-            if (interval) clearInterval(interval);
+            if (intervalRef.current) clearInterval(intervalRef.current);
+            intervalRef.current = undefined;
         };
     }, [
         running, 
