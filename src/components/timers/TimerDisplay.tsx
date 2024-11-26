@@ -1,6 +1,7 @@
 import { DisplayTime } from '../generic/DisplayTime'
 import { DisplayRounds } from '../generic/DisplayRounds'
 import { Button, PlayPauseButton, FastForwardButton, ResetButton } from '../generic/Button'
+import { totalWorkoutTime } from '../../context/TimerContext';
 
 interface TimerDisplayProps {
     timeInMs: number;
@@ -39,6 +40,7 @@ const TimerDisplay = ({
         return (
             <div className="h-full flex flex-col items-center justify-center">
                 <h2 className="text-xl">Ready to workout?</h2>
+                <div className="text-md">Total Time: {totalWorkoutTime()}</div>
                 <Button onClick={handleStart}>Start Workout</Button>
             </div>
         )

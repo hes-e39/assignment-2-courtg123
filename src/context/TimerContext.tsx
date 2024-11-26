@@ -1,5 +1,6 @@
-import { createContext, useState, useEffect, useRef } from 'react'
+import { createContext, useState, useEffect, useRef, useContext } from 'react'
 import { Timer } from '../types/timers'
+import { formatTime } from '../utils/helpers'
 
 // Global context for Timer
 export const TimerContext = createContext({
@@ -42,6 +43,27 @@ export const displayTimerDetails = (timer: Timer) => {
     return details;
   }
 
+// Total time calculation
+export const totalWorkoutTime = () => {
+    const { timers } = useContext(TimerContext)
+    
+    const totalMs = timers.map(timer => {
+        if (timer.type === 'Tabata') {
+            const rounds = timer.settings.rounds || 0;
+            const workSeconds = timer.settings.workSeconds || 0;
+            const restSeconds = timer.settings.restSeconds || 0;
+            return (((workSeconds + restSeconds) * rounds) * 1000);
+        } else if (timer.type === 'XY') {
+            const rounds = timer.settings.rounds || 0;
+            const totalSeconds = timer.settings.totalSeconds || 0;
+            return ((totalSeconds * rounds) * 1000);
+        } else {
+            const totalSeconds = timer.settings.totalSeconds || 0;
+            return totalSeconds * 1000;
+        }
+    }).reduce((sum, ms) => sum + ms, 0)
+    return formatTime(totalMs);
+};
 
 // Workout functionality
 export function WorkoutProvider({ children }:  { children: React.ReactNode }) {
